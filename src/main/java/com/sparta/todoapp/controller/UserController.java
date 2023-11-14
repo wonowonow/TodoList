@@ -1,7 +1,9 @@
 package com.sparta.todoapp.controller;
 
+import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,5 +22,11 @@ public class UserController {
     public SignupRequestDto userSignup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
         userService.userSignup(signupRequestDto);
         return signupRequestDto;
+    }
+
+    @PostMapping("/login")
+    public LoginRequestDto userLogin(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse res) {
+        userService.userLogin(loginRequestDto, res);
+        return loginRequestDto;
     }
 }
