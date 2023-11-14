@@ -8,16 +8,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
-import java.math.BigInteger;
 import java.util.Set;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
 public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CARD_ID")
-    private BigInteger id;
+    private Long id;
     @NotEmpty
     @Column(nullable = false, length = 50)
     private String title;

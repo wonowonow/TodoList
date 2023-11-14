@@ -8,15 +8,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
-import java.math.BigInteger;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMMENT_ID")
-    private BigInteger id;
+    private Long id;
     @NotEmpty
     @Column(nullable = false, length = 255)
     private String content;
