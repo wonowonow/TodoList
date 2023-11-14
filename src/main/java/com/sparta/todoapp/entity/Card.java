@@ -24,6 +24,8 @@ public class Card {
     @NotEmpty
     @Column(nullable = false, length = 255)
     private String content;
+    @Column(nullable = false)
+    private Boolean isDone = false;
     @OneToMany
     @JoinColumn(name = "COMMENT_ID")
     private Set<Comment> comments;
