@@ -22,6 +22,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
+
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
     // 사용자 권한 값의 KEY
@@ -62,7 +63,8 @@ public class JwtUtil {
     // JWT Cookie 에 저장
     public void addJwtToCookie(String token, HttpServletResponse res) {
         try {
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+            token = URLEncoder.encode(token, "utf-8")
+                    .replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
             Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
             cookie.setPath("/");
@@ -107,9 +109,9 @@ public class JwtUtil {
 
     public String getTokenFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if(cookie.getName().equals(AUTHORIZATION_HEADER)) {
+                if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
                     try {
                         URLDecoder.decode(cookie.getValue(), "UTF-8");
                     } catch (UnsupportedEncodingException e) {

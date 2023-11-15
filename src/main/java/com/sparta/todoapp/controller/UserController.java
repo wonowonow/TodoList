@@ -1,9 +1,7 @@
 package com.sparta.todoapp.controller;
 
-import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

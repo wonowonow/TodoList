@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
+
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -27,7 +28,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
+            FilterChain filterChain) throws ServletException, IOException {
 
         String tokenValue = jwtUtil.getTokenFromRequest(req);
 
@@ -40,7 +42,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
-            try{
+            try {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
                 e.getMessage();
@@ -61,6 +63,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private Authentication createAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null,
+                userDetails.getAuthorities());
     }
 }
