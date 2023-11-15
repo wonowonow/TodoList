@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.Set;
@@ -27,6 +28,9 @@ public class Card {
     private String content;
     @Column(nullable = false)
     private Boolean isDone = false;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
     @OneToMany
     @JoinColumn(name = "COMMENT_ID")
     private Set<Comment> comments;
