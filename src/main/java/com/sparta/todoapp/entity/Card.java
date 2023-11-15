@@ -30,4 +30,10 @@ public class Card {
     @OneToMany
     @JoinColumn(name = "COMMENT_ID")
     private Set<Comment> comments;
+
+    public Card(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.isDone = false;
+    }
 }

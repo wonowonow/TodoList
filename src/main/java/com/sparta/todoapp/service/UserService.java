@@ -8,10 +8,12 @@ import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j(topic = "유저 서비스")
 public class UserService {
 
     private final UserRepository userRepository;
@@ -26,6 +28,7 @@ public class UserService {
     }
 
     public void userSignup(SignupRequestDto signupRequestDto) {
+        log.info("유저 회원가입");
         String username = signupRequestDto.getUsername();
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
