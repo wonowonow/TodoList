@@ -31,8 +31,7 @@ public class Card {
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
-    @OneToMany
-    @JoinColumn(name = "COMMENT_ID")
+    @OneToMany(mappedBy = "card")
     private Set<Comment> comments;
 
     public Card(String title, String content) {
