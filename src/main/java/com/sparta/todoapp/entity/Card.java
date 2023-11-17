@@ -1,5 +1,6 @@
 package com.sparta.todoapp.entity;
 
+import com.sparta.todoapp.dto.CardResponseDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -66,5 +67,10 @@ public class Card {
         this.content = content;
         this.user = user;
         this.isDone = false;
+    }
+
+    public Card(CardResponseDto cardResponseDto) {
+        this.title = cardResponseDto.getTitle();
+        this.content = cardResponseDto.getContent();
     }
 }

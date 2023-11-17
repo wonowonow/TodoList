@@ -63,15 +63,6 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
         );
 
-        http.formLogin((formLogin) ->
-                formLogin
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/todos")
-                        .failureUrl("/login?error")
-                        .permitAll()
-        );
-
         // 필터
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

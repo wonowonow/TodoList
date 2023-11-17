@@ -6,9 +6,11 @@ import com.sparta.todoapp.dto.card.CardListResponseDto;
 import com.sparta.todoapp.entity.Card;
 import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.repository.CardRepository;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CardService {
@@ -44,6 +46,21 @@ public class CardService {
         CardResponseDto cardResponseDto = new CardResponseDto();
         for (Card card : cardList) {
             if (card.getId().equals(cardId)) {
+                cardResponseDto = new CardResponseDto(card);
+            }
+        }
+        return cardResponseDto;
+    }
+
+    @Transactional
+    public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId, User user) {
+        List<Card> cardList = cardRepository.findAllByUser(user);
+        CardResponseDto cardResponseDto = new CardResponseDto();
+        for (Card card : cardList) {
+            if (card.getId().equals(cardId)) {
+                card.setContent(cardPostRequestDto.getContent());
+                card.setTitle(cardPostRequestDto.getTitle());
+                cardRepository.save(card);
                 cardResponseDto = new CardResponseDto(card);
             }
         }

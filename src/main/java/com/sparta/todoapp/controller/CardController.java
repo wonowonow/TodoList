@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,5 +39,10 @@ public class CardController {
     @GetMapping("/todos/{cardId}")
     public CardResponseDto getTodoCard(@PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return cardService.getTodoCard(cardId, userDetails.getUser());
+    }
+
+    @PutMapping("/todos/{cardId}")
+    public CardResponseDto editTodoCard(@RequestBody @Valid CardPostRequestDto cardPostRequestDto,@PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return cardService.editTodoCard(cardPostRequestDto, cardId, userDetails.getUser());
     }
 }
