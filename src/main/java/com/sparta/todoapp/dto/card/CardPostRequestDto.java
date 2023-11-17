@@ -7,6 +7,7 @@ import lombok.Getter;
 public class CardPostRequestDto {
     @NotEmpty
     String title;
+
     @NotEmpty
     String content;
 }

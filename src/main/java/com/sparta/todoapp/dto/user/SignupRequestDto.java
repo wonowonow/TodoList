@@ -12,6 +12,7 @@ public class SignupRequestDto {
     @Size(min = 4, max = 10)
     @Pattern(regexp = "^[a-z0-9]+$")
     private String username;
+
     @NotEmpty
     @Size(min = 8, max = 15)
     @Pattern(regexp = "^[a-zA-Z0-9]+$")
