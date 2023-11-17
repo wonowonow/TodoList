@@ -2,21 +2,29 @@ package com.sparta.todoapp.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.Set;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 public class User {
 
@@ -35,11 +43,16 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Card> cards;
+    @CreatedDate
+    @Column(updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user")
-    private Set<Comment> comments;
+    private List<Card> cards;
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments;
 
     public User(String username, String password, UserRoleEnum role) {
         this.username = username;
