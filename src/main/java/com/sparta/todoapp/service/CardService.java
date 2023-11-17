@@ -1,6 +1,7 @@
 package com.sparta.todoapp.service;
 
 import com.sparta.todoapp.dto.CardResponseDto;
+import com.sparta.todoapp.dto.card.CardDoneStatusRequestDto;
 import com.sparta.todoapp.dto.card.CardPostRequestDto;
 import com.sparta.todoapp.dto.card.CardListResponseDto;
 import com.sparta.todoapp.entity.Card;
@@ -60,6 +61,20 @@ public class CardService {
             if (card.getId().equals(cardId)) {
                 card.setContent(cardPostRequestDto.getContent());
                 card.setTitle(cardPostRequestDto.getTitle());
+                cardRepository.save(card);
+                cardResponseDto = new CardResponseDto(card);
+            }
+        }
+        return cardResponseDto;
+    }
+
+    @Transactional
+    public CardResponseDto changeTodoCardDone(Long cardId, User user, CardDoneStatusRequestDto cardDoneStatusRequestDto) {
+        List<Card> cardList = cardRepository.findAllByUser(user);
+        CardResponseDto cardResponseDto = new CardResponseDto();
+        for (Card card : cardList) {
+            if(card.getId().equals(cardId)) {
+                card.setIsDone(cardDoneStatusRequestDto.getIsDone());
                 cardRepository.save(card);
                 cardResponseDto = new CardResponseDto(card);
             }
