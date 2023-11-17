@@ -1,5 +1,6 @@
 package com.sparta.todoapp.service;
 
+import com.sparta.todoapp.dto.CardResponseDto;
 import com.sparta.todoapp.dto.card.CardPostRequestDto;
 import com.sparta.todoapp.dto.card.CardListResponseDto;
 import com.sparta.todoapp.entity.Card;
@@ -36,5 +37,16 @@ public class CardService {
         }
 
         return cardListResponseDtoList;
+    }
+
+    public CardResponseDto getTodoCard(Long cardId, User user) {
+        List<Card> cardList = cardRepository.findAllByUser(user);
+        CardResponseDto cardResponseDto = new CardResponseDto();
+        for (Card card : cardList) {
+            if (card.getId().equals(cardId)) {
+                cardResponseDto = new CardResponseDto(card);
+            }
+        }
+        return cardResponseDto;
     }
 }

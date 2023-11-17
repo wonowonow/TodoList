@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface CardRepository extends JpaRepository<Card, Long> {
 
     List<Card> findAllByUser(User user);
+
 }
