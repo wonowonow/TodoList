@@ -52,4 +52,10 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "CARD_ID", nullable = false)
     private Card card;
+
+    public Comment(String content, User user, Card card) {
+        this.content = content;
+        this.user = user;
+        this.card = card;
+    }
 }

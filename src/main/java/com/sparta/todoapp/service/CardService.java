@@ -74,6 +74,7 @@ public class CardService {
         CardResponseDto cardResponseDto = new CardResponseDto();
         for (Card card : cardList) {
             if(card.getId().equals(cardId)) {
+
                 card.setIsDone(cardDoneStatusRequestDto.getIsDone());
                 cardRepository.save(card);
                 cardResponseDto = new CardResponseDto(card);
