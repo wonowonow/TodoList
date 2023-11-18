@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,9 +22,16 @@ public class CommentController {
     }
 
     @PostMapping("/todos/{cardId}/comments")
-    public CommentResponseDto createComment(@PathVariable Long cardId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal
-            UserDetailsImpl userDetails) {
+    public CommentResponseDto createComment(@PathVariable Long cardId,
+            @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal
+    UserDetailsImpl userDetails) {
         return commentService.createComment(cardId, commentRequestDto, userDetails.getUser());
     }
 
+    @PutMapping("/todos/{cardId}/comments/{commentId}")
+    public void editComment(@PathVariable Long cardId, @PathVariable Long commentId,
+            @RequestBody CommentRequestDto commentRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        commentService.editComment(commentId, commentRequestDto, userDetails.getUser());
+    }
 }
