@@ -41,4 +41,13 @@ public class CommentService {
             }
         }
     }
+
+    public void deleteComment(Long commentId, User user) {
+        List<Comment> commentList = commentRepository.findAllByUser(user);
+        for(Comment comment : commentList) {
+            if (comment.getId().equals(commentId)) {
+                commentRepository.delete(comment);
+            }
+        }
+    }
 }
