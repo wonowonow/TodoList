@@ -59,7 +59,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String success = "로그인 되었습니다.";
 
         response.getWriter().write(success);
-        response.getWriter().flush();
 
         jwtUtil.addJwtToCookie(token, response);
     }
