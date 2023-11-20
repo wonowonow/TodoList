@@ -35,8 +35,8 @@ public class CardController {
     }
 
     @GetMapping("/todos")
-    public List<CardListResponseDto> getTodoCards(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return cardService.getTodoCards(userDetails.getUser());
+    public List<CardListResponseDto> getTodoCards() {
+        return cardService.getTodoCards();
     }
 
     @GetMapping("/todos/{cardId}")

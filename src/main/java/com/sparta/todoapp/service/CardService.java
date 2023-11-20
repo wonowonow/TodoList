@@ -30,9 +30,9 @@ public class CardService {
         cardRepository.save(card);
     }
 
-    public List<CardListResponseDto> getTodoCards(User user) {
+    public List<CardListResponseDto> getTodoCards() {
 
-        List<Card> cardList = cardRepository.findAllByUser(user);
+        List<Card> cardList = cardRepository.findAll();
         List<CardListResponseDto> cardListResponseDtoList = new ArrayList<>();
 
         for(Card card : cardList) {
