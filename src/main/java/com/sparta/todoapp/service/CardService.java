@@ -32,7 +32,7 @@ public class CardService {
 
     public List<CardListResponseDto> getTodoCards() {
 
-        List<Card> cardList = cardRepository.findAll();
+        List<Card> cardList = cardRepository.findAllByOrderByCreatedAtDesc();
         List<CardListResponseDto> cardListResponseDtoList = new ArrayList<>();
 
         for(Card card : cardList) {
