@@ -3,6 +3,8 @@ package com.sparta.todoapp.controller;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +19,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public SignupRequestDto userSignup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+    public ResponseEntity<String> userSignup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
         userService.userSignup(signupRequestDto);
-        return signupRequestDto;
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료 되었습니다.");
     }
 }
