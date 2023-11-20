@@ -45,12 +45,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-            HttpServletResponse response, FilterChain chain, Authentication authResult) {
+            HttpServletResponse response, FilterChain chain, Authentication authResult)
+            throws IOException {
         log.info("로그인 성공 및 JWT 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
         String token = jwtUtil.createToken(username, role);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String success = "로그인 되었습니다.";
+
+        response.getWriter().write(success);
+        response.getWriter().flush();
+
         jwtUtil.addJwtToCookie(token, response);
     }
 
