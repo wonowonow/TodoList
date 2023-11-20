@@ -41,8 +41,8 @@ public class CardController {
     }
 
     @GetMapping("/todos/{cardId}")
-    public CardResponseDto getTodoCard(@PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return cardService.getTodoCard(cardId, userDetails.getUser());
+    public CardResponseDto getTodoCard(@PathVariable Long cardId) {
+        return cardService.getTodoCard(cardId);
     }
 
     @PutMapping("/todos/{cardId}")

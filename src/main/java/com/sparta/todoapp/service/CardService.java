@@ -7,8 +7,6 @@ import com.sparta.todoapp.dto.card.CardListResponseDto;
 import com.sparta.todoapp.entity.Card;
 import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.repository.CardRepository;
-import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,14 +39,10 @@ public class CardService {
                 .collect(Collectors.groupingBy(CardListResponseDto::getAuthor));
     }
 
-    public CardResponseDto getTodoCard(Long cardId, User user) {
-        List<Card> cardList = cardRepository.findAllByUser(user);
-        CardResponseDto cardResponseDto = new CardResponseDto();
-        for (Card card : cardList) {
-            if (card.getId().equals(cardId)) {
-                cardResponseDto = new CardResponseDto(card);
-            }
-        }
+    public CardResponseDto getTodoCard(Long cardId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("선택한 투 두 카드가 존재하지 않습니다."));
+        CardResponseDto cardResponseDto = new CardResponseDto(card);
         return cardResponseDto;
     }
 
