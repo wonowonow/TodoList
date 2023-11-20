@@ -10,6 +10,8 @@ import com.sparta.todoapp.repository.CardRepository;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,16 +32,13 @@ public class CardService {
         cardRepository.save(card);
     }
 
-    public List<CardListResponseDto> getTodoCards() {
+    public Map<String, List<CardListResponseDto>> getTodoCards() {
 
         List<Card> cardList = cardRepository.findAllByOrderByCreatedAtDesc();
-        List<CardListResponseDto> cardListResponseDtoList = new ArrayList<>();
 
-        for(Card card : cardList) {
-            cardListResponseDtoList.add(new CardListResponseDto(card));
-        }
-
-        return cardListResponseDtoList;
+        return cardList.stream()
+                .map(CardListResponseDto::new)
+                .collect(Collectors.groupingBy(CardListResponseDto::getAuthor));
     }
 
     public CardResponseDto getTodoCard(Long cardId, User user) {
@@ -54,7 +53,8 @@ public class CardService {
     }
 
     @Transactional
-    public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId, User user) {
+    public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
+            User user) {
         List<Card> cardList = cardRepository.findAllByUser(user);
         CardResponseDto cardResponseDto = new CardResponseDto();
         for (Card card : cardList) {
@@ -69,11 +69,12 @@ public class CardService {
     }
 
     @Transactional
-    public CardResponseDto changeTodoCardDone(Long cardId, User user, CardDoneStatusRequestDto cardDoneStatusRequestDto) {
+    public CardResponseDto changeTodoCardDone(Long cardId, User user,
+            CardDoneStatusRequestDto cardDoneStatusRequestDto) {
         List<Card> cardList = cardRepository.findAllByUser(user);
         CardResponseDto cardResponseDto = new CardResponseDto();
         for (Card card : cardList) {
-            if(card.getId().equals(cardId)) {
+            if (card.getId().equals(cardId)) {
 
                 card.setIsDone(cardDoneStatusRequestDto.getIsDone());
                 cardRepository.save(card);
