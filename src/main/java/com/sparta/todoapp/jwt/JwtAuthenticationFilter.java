@@ -57,8 +57,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,
             HttpServletResponse response, AuthenticationException failed) throws IOException {
-        log.info("회원을 찾을 수 없습니다.");
+        log.info("로그인 실패");
         response.setStatus(400);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String error = "회원을 찾을 수 없습니다.";
+
+        response.getWriter().write(error);
+        response.getWriter().flush();
     }
 
 
