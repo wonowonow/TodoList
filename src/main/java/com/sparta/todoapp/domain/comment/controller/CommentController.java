@@ -3,7 +3,7 @@ package com.sparta.todoapp.domain.comment.controller;
 import com.sparta.todoapp.domain.comment.dto.CommentRequestDto;
 import com.sparta.todoapp.domain.comment.dto.CommentResponseDto;
 import com.sparta.todoapp.domain.comment.service.CommentService;
-import com.sparta.todoapp.security.UserDetailsImpl;
+import com.sparta.todoapp.global.security.UserDetailsImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;

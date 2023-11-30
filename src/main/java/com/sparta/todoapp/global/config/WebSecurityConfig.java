@@ -1,9 +1,9 @@
-package com.sparta.todoapp.config;
+package com.sparta.todoapp.global.config;
 
-import com.sparta.todoapp.jwt.JwtAuthenticationFilter;
-import com.sparta.todoapp.jwt.JwtAuthorizationFilter;
-import com.sparta.todoapp.jwt.JwtUtil;
-import com.sparta.todoapp.security.UserDetailsServiceImpl;
+import com.sparta.todoapp.global.jwt.JwtAuthenticationFilter;
+import com.sparta.todoapp.global.jwt.JwtAuthorizationFilter;
+import com.sparta.todoapp.global.jwt.JwtUtil;
+import com.sparta.todoapp.global.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

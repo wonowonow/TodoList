@@ -1,6 +1,6 @@
-package com.sparta.todoapp.jwt;
+package com.sparta.todoapp.global.jwt;
 
-import com.sparta.todoapp.security.UserDetailsServiceImpl;
+import com.sparta.todoapp.global.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

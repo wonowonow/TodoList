@@ -1,4 +1,4 @@
-package com.sparta.todoapp.security;
+package com.sparta.todoapp.global.security;
 
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.domain.user.repository.UserRepository;

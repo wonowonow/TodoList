@@ -5,7 +5,7 @@ import com.sparta.todoapp.domain.card.dto.CardDoneStatusRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardListResponseDto;
 import com.sparta.todoapp.domain.card.service.CardService;
-import com.sparta.todoapp.security.UserDetailsImpl;
+import com.sparta.todoapp.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
