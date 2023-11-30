@@ -13,7 +13,9 @@ public enum ExceptionCode {
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, "해당 댓글은 존재하지 않습니다"),
 
     FORBIDDEN_EDIT_ONLY_WRITER(HttpStatus.FORBIDDEN, "작성자만 수정 할 수 있습니다"),
-    FORBIDDEN_DELETE_ONLY_WRITER(HttpStatus.FORBIDDEN, "작성자만 삭제 할 수 있습니다");
+    FORBIDDEN_DELETE_ONLY_WRITER(HttpStatus.FORBIDDEN, "작성자만 삭제 할 수 있습니다"),
+
+    BAD_REQUEST_USERNAME_ALREADY_IN_USE(HttpStatus.BAD_REQUEST, "중복된 username입니다");
 
     private final HttpStatus httpStatus;
     private final String message;
