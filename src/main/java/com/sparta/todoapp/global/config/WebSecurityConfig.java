@@ -65,8 +65,9 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(
                 (authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/signup").permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+                        .requestMatchers(new MvcRequestMatcher(introspector,"/login")).permitAll()
+                        .requestMatchers(new MvcRequestMatcher(introspector,"/signup")).permitAll()
                         .anyRequest().authenticated())
             .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin));
 
@@ -75,11 +76,5 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().
-                            requestMatchers(new AntPathRequestMatcher("/h2-console/**"));
     }
 }
