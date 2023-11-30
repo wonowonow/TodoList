@@ -13,12 +13,14 @@ public class CardResponseDto {
     String title;
     String content;
     String author;
+    Boolean isDone;
     LocalDateTime createdAt;
 
     public CardResponseDto(Card card) {
         this.title = card.getTitle();
         this.content = card.getContent();
         this.author = card.getUser().getUsername();
+        this.isDone = card.getIsDone();
         this.createdAt = card.getCreatedAt();
     }
 }

@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.sparta.todoapp.domain.card.dto.CardDoneStatusRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardListResponseDto;
 import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(MockitoExtension.class)
 class CardServiceTest {
@@ -93,5 +95,47 @@ class CardServiceTest {
         Assertions.assertEquals(1, result.get(user2.getUsername()).size());
         Assertions.assertEquals(6, result.get(user1.getUsername()).size());
         Assertions.assertEquals("제목 3", result.get(user1.getUsername()).get(1).getTitle());
+    }
+
+    @Test
+    @DisplayName("카드 변경 테스트")
+    void test4() {
+        // given
+        CardService cardService = new CardService(cardRepository);
+        CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
+        Long cardId = 1L;
+        String title = "수정 제목";
+        String content = "수정 내용";
+        User user = new User("username", "password", UserRoleEnum.USER);
+        user.setId(1L);
+        Card card = new Card("제목", "내용", user);
+        cardPostRequestDto.setTitle(title);
+        cardPostRequestDto.setContent(content);
+        given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
+        // when
+        CardResponseDto result = cardService.editTodoCard(cardPostRequestDto, cardId, user);
+        // then
+        Assertions.assertEquals(title, result.getTitle());
+    }
+
+    @Test
+    @DisplayName("카드 상태 변경 테스트")
+    void test5() {
+        // given
+        CardService cardService = new CardService(cardRepository);
+        User user = new User("username", "password", UserRoleEnum.USER);
+        user.setId(1L);
+        Card card = new Card("제목", "내용", user);
+        card.setId(1L);
+        CardResponseDto cardResponseDto = new CardResponseDto(card);
+        CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
+        doneStatusRequestDto.setIsDone(true);
+        given(cardRepository.findById(card.getId())).willReturn(Optional.of(card));
+        // when
+        CardResponseDto result = cardService.changeTodoCardDone(card.getId(), user, doneStatusRequestDto);
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(cardResponseDto.getTitle(), result.getTitle());
+        Assertions.assertEquals(cardResponseDto.getContent(), result.getContent());
     }
 }
