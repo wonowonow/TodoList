@@ -1,8 +1,8 @@
 package com.sparta.todoapp.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.todoapp.dto.user.LoginRequestDto;
-import com.sparta.todoapp.entity.UserRoleEnum;
+import com.sparta.todoapp.domain.user.dto.LoginRequestDto;
+import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import com.sparta.todoapp.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

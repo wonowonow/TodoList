@@ -1,7 +1,7 @@
 package com.sparta.todoapp.security;
 
-import com.sparta.todoapp.entity.User;
-import com.sparta.todoapp.repository.UserRepository;
+import com.sparta.todoapp.domain.user.entity.User;
+import com.sparta.todoapp.domain.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

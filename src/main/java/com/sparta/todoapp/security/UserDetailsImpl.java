@@ -1,7 +1,7 @@
 package com.sparta.todoapp.security;
 
-import com.sparta.todoapp.entity.User;
-import com.sparta.todoapp.entity.UserRoleEnum;
+import com.sparta.todoapp.domain.user.entity.User;
+import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

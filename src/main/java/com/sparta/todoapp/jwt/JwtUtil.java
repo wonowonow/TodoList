@@ -1,6 +1,6 @@
 package com.sparta.todoapp.jwt;
 
-import com.sparta.todoapp.entity.UserRoleEnum;
+import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
