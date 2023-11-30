@@ -7,6 +7,8 @@ import com.sparta.todoapp.domain.card.dto.CardListResponseDto;
 import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.repository.CardRepository;
 import com.sparta.todoapp.domain.user.entity.User;
+import com.sparta.todoapp.global.exception.CustomException;
+import com.sparta.todoapp.global.exception.ExceptionCode;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,8 +42,9 @@ public class CardService {
     }
 
     public CardResponseDto getTodoCard(Long cardId) {
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("선택한 투 두 카드가 존재하지 않습니다."));
+        Card card = cardRepository.findById(cardId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
+        );
         CardResponseDto cardResponseDto = new CardResponseDto(card);
         return cardResponseDto;
     }
@@ -49,32 +52,32 @@ public class CardService {
     @Transactional
     public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
             User user) {
-        List<Card> cardList = cardRepository.findAllByUser(user);
-        CardResponseDto cardResponseDto = new CardResponseDto();
-        for (Card card : cardList) {
-            if (card.getId().equals(cardId)) {
-                card.setContent(cardPostRequestDto.getContent());
-                card.setTitle(cardPostRequestDto.getTitle());
-                cardRepository.save(card);
-                cardResponseDto = new CardResponseDto(card);
-            }
+        Card card = cardRepository.findById(cardId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
+        );
+        if (card.getUser().getId().equals(user.getId())) {
+            card.setContent(cardPostRequestDto.getContent());
+            card.setTitle(cardPostRequestDto.getTitle());
+        } else {
+            throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
-        return cardResponseDto;
+
+        return new CardResponseDto(card);
     }
 
     @Transactional
     public CardResponseDto changeTodoCardDone(Long cardId, User user,
             CardDoneStatusRequestDto cardDoneStatusRequestDto) {
-        List<Card> cardList = cardRepository.findAllByUser(user);
-        CardResponseDto cardResponseDto = new CardResponseDto();
-        for (Card card : cardList) {
-            if (card.getId().equals(cardId)) {
+        Card card = cardRepository.findById(cardId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
+        );
 
-                card.setIsDone(cardDoneStatusRequestDto.getIsDone());
-                cardRepository.save(card);
-                cardResponseDto = new CardResponseDto(card);
-            }
+        if (card.getUser().getId().equals(user.getId())) {
+            card.setIsDone(cardDoneStatusRequestDto.getIsDone());
+        } else {
+            throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
-        return cardResponseDto;
+
+        return new CardResponseDto(card);
     }
 }

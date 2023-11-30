@@ -13,4 +13,5 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     List<Card> findAllByOrderByCreatedAtDesc();
 
+    Card findByIdAndUser(Long cardId, User user);
 }
