@@ -3,6 +3,8 @@ package com.sparta.todoapp.domain.user.service;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import com.sparta.todoapp.domain.user.dto.SignupRequestDto;
+import com.sparta.todoapp.global.exception.CustomException;
+import com.sparta.todoapp.global.exception.ExceptionCode;
 import com.sparta.todoapp.global.jwt.JwtUtil;
 import com.sparta.todoapp.domain.user.repository.UserRepository;
 import java.util.Optional;
@@ -29,7 +31,7 @@ public class UserService {
 
         Optional<User> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("등록된 사용자가 존재합니다.");
+            throw new CustomException(ExceptionCode.BAD_REQUEST_USERNAME_ALREADY_IN_USE);
         }
 
         UserRoleEnum role = UserRoleEnum.USER;
