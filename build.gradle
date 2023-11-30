@@ -33,6 +33,9 @@ dependencies {
 	// MySql
 	implementation 'mysql:mysql-connector-java:8.0.28'
 
+	// H2 DATABASE - ONLY FOR TEST
+	runtimeOnly 'com.h2database:h2'
+
 	// Valid
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
