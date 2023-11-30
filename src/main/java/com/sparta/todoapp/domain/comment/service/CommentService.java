@@ -28,7 +28,9 @@ public class CommentService {
             User user) {
 
         String content = commentRequestDto.getContent();
-        Card card = cardRepository.getReferenceById(cardId);
+        Card card = cardRepository.findById(cardId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
+        );
         Comment comment = new Comment(content, user, card);
         commentRepository.save(comment);
         CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
@@ -37,7 +39,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void editComment(Long commentId,
+    public CommentResponseDto editComment(Long commentId,
             CommentRequestDto commentRequestDto, User user) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
@@ -49,6 +51,8 @@ public class CommentService {
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
+
+        return new CommentResponseDto(comment);
     }
 
     public void deleteComment(Long commentId, User user) {

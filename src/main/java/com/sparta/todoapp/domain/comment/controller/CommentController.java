@@ -4,6 +4,7 @@ import com.sparta.todoapp.domain.comment.dto.CommentRequestDto;
 import com.sparta.todoapp.domain.comment.dto.CommentResponseDto;
 import com.sparta.todoapp.domain.comment.service.CommentService;
 import com.sparta.todoapp.global.security.UserDetailsImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,15 +30,16 @@ public class CommentController {
     }
 
     @PutMapping("/todos/{cardId}/comments/{commentId}")
-    public void editComment(@PathVariable Long cardId, @PathVariable Long commentId,
+    public CommentResponseDto editComment(@PathVariable Long cardId, @PathVariable Long commentId,
             @RequestBody CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        commentService.editComment(commentId, commentRequestDto, userDetails.getUser());
+        return commentService.editComment(commentId, commentRequestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/todos/{cardId}/comments/{commentId}")
-    public void deleteComment(@PathVariable Long cardId, @PathVariable Long commentId,
+    public ResponseEntity<String> deleteComment(@PathVariable Long cardId, @PathVariable Long commentId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         commentService.deleteComment(commentId, userDetails.getUser());
+        return ResponseEntity.status(200).body("댓글이 삭제 되었습니다.");
     }
 }
