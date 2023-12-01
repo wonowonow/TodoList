@@ -143,8 +143,8 @@ class CardServiceTest {
         }
 
         @Test
-        @DisplayName("카드 변경 테스트 - 실패")
-        void 카드_변경_테스트_실패() {
+        @DisplayName("카드 변경 테스트 - 실패 (투 두 카드 없음)")
+        void 카드_변경_테스트_실패_카드_없음() {
             // given
             CardService cardService = new CardService(cardRepository);
             CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
@@ -161,6 +161,29 @@ class CardServiceTest {
             assertThatThrownBy(() -> cardService.editTodoCard(cardPostRequestDto, cardId, user))
                     .isInstanceOf(CustomException.class)
                     .hasMessage("해당 투 두 카드는 존재하지 않습니다.");
+        }
+
+        @Test
+        @DisplayName("카드 변경 테스트 - 실패 (권한 없음)")
+        void 카드_변경_테스트_실패_권한_없음() {
+            // given
+            CardService cardService = new CardService(cardRepository);
+            CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
+            Long cardId = 1L;
+            String title = "수정 제목";
+            String content = "수정 내용";
+            User user1 = new User("username", "password", UserRoleEnum.USER);
+            user1.setId(1L);
+            User user2 = new User("username", "password", UserRoleEnum.USER);
+            user2.setId(2L);
+            Card card = new Card("제목", "내용", user1);
+            cardPostRequestDto.setTitle(title);
+            cardPostRequestDto.setContent(content);
+            given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
+            // when & then
+            assertThatThrownBy(() -> cardService.editTodoCard(cardPostRequestDto, cardId, user2))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage("작성자만 수정 할 수 있습니다");
         }
     }
 
