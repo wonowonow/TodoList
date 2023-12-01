@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.todoapp.domain.card.controller.CardController;
 import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
+import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.service.CardService;
 import com.sparta.todoapp.domain.user.controller.UserController;
 import com.sparta.todoapp.domain.user.dto.SignupRequestDto;
@@ -38,6 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -76,6 +78,7 @@ public class UserCardMvcTest {
     void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity(new MockSpringSecurityFilter()))
+                .alwaysDo(print())
                 .build();
     }
 
@@ -104,8 +107,7 @@ public class UserCardMvcTest {
                 .content(signupRequestJson)
         )
                 .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("회원가입이 완료 되었습니다.")))
-                .andDo(print());
+                .andExpect(content().string(containsString("회원가입이 완료 되었습니다.")));
     }
 
     @Test
@@ -113,7 +115,6 @@ public class UserCardMvcTest {
     void test2() throws Exception {
         // given
         this.mockUserSetup();
-        CardController controller = new CardController(cardService);
         CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
         cardPostRequestDto.setTitle("제목");
         cardPostRequestDto.setContent("내용");
@@ -136,7 +137,35 @@ public class UserCardMvcTest {
                 .principal(mockPrincipal)
         )
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath(title, is("제목")))
-                .andDo(print());
+                .andExpect(jsonPath(title, is("제목")));
+    }
+
+    @Test
+    @DisplayName("카드 수정 테스트")
+    void test3() throws Exception{
+        // Given
+        this.mockUserSetup();
+        CardPostRequestDto requestDto = new CardPostRequestDto();
+        requestDto.setTitle("수정제목");
+        requestDto.setContent("수정내용");
+        String requestJson = objectMapper.writeValueAsString(requestDto);
+        CardResponseDto responseDto = new CardResponseDto();
+        responseDto.setTitle("수정제목");
+        responseDto.setContent("수정내용");
+        responseDto.setAuthor("username");
+        responseDto.setIsDone(false);
+        String title = "$.title";
+        String content = "$.content";
+        given(cardService.editTodoCard(any(CardPostRequestDto.class), any(Long.class), any(User.class))).willReturn(responseDto);
+        // When & Then
+        mvc.perform(put("/todos/1")
+                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                .content(requestJson)
+                .accept(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                .principal(mockPrincipal)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(title, is("수정제목")))
+                .andExpect(jsonPath(content, is("수정내용")));
     }
 }
