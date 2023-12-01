@@ -158,32 +158,77 @@ class CardServiceTest {
             cardPostRequestDto.setContent(content);
             given(cardRepository.findById(cardId)).willReturn(Optional.empty());
             // when & then
-            assertThatThrownBy(() -> cardService.editTodoCard(cardPostRequestDto, cardId, user)).isInstanceOf(
-                    CustomException.class).hasMessage("해당 투 두 카드는 존재하지 않습니다.");
+            assertThatThrownBy(() -> cardService.editTodoCard(cardPostRequestDto, cardId, user))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage("해당 투 두 카드는 존재하지 않습니다.");
         }
     }
 
-
-    @Test
+    @Nested
     @DisplayName("카드 상태 변경 테스트")
-    void test5() {
-        // given
-        CardService cardService = new CardService(cardRepository);
-        User user = new User("username", "password", UserRoleEnum.USER);
-        user.setId(1L);
-        Card card = new Card("제목", "내용", user);
-        card.setId(1L);
-        CardResponseDto cardResponseDto = new CardResponseDto(card);
-        CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
-        doneStatusRequestDto.setIsDone(true);
-        given(cardRepository.findById(card.getId())).willReturn(Optional.of(card));
-        // when
-        CardResponseDto result = cardService.changeTodoCardDone(card.getId(), user,
-                doneStatusRequestDto);
-        // then
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(cardResponseDto.getTitle(), result.getTitle());
-        Assertions.assertEquals(cardResponseDto.getContent(), result.getContent());
-        Assertions.assertTrue(result.getIsDone());
+    class 카드_상태_변경_테스트 {
+
+        @Test
+        @DisplayName("카드 상태 변경 테스트 - 성공")
+        void 카드_상태_변경_테스트_성공() {
+            // given
+            CardService cardService = new CardService(cardRepository);
+            User user = new User("username", "password", UserRoleEnum.USER);
+            user.setId(1L);
+            Card card = new Card("제목", "내용", user);
+            card.setId(1L);
+            CardResponseDto cardResponseDto = new CardResponseDto(card);
+            CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
+            doneStatusRequestDto.setIsDone(true);
+            given(cardRepository.findById(card.getId())).willReturn(Optional.of(card));
+            // when
+            CardResponseDto result = cardService.changeTodoCardDone(card.getId(), user,
+                    doneStatusRequestDto);
+            // then
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(cardResponseDto.getTitle(), result.getTitle());
+            Assertions.assertEquals(cardResponseDto.getContent(), result.getContent());
+            Assertions.assertTrue(result.getIsDone());
+        }
+
+        @Test
+        @DisplayName("카드 상태 변경 테스트 - 실패 (투 두 카드 없음)")
+        void 카드_상태_변경_테스트_실패_카드_없음() {
+            // given
+            CardService cardService = new CardService(cardRepository);
+            User user = new User("username", "password", UserRoleEnum.USER);
+            user.setId(1L);
+            Card card = new Card("제목", "내용", user);
+            card.setId(1L);
+            CardResponseDto cardResponseDto = new CardResponseDto(card);
+            CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
+            doneStatusRequestDto.setIsDone(true);
+            given(cardRepository.findById(card.getId())).willReturn(Optional.empty());
+            // when & then
+            assertThatThrownBy(() -> cardService.changeTodoCardDone(card.getId(), user, doneStatusRequestDto))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage("해당 투 두 카드는 존재하지 않습니다.");
+        }
+        @Test
+        @DisplayName("카드 상태 변경 테스트 - 실패 (권한 없음)")
+        void 카드_상태_변경_테스트_실패_권한_없음() {
+            // given
+            CardService cardService = new CardService(cardRepository);
+            User user1 = new User("username", "password", UserRoleEnum.USER);
+            user1.setId(1L);
+            User user2 = new User("username", "password", UserRoleEnum.USER);
+            user2.setId(2L);
+            Card card = new Card("제목", "내용", user1);
+            card.setId(1L);
+            CardResponseDto cardResponseDto = new CardResponseDto(card);
+            CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
+            doneStatusRequestDto.setIsDone(true);
+            given(cardRepository.findById(card.getId())).willReturn(Optional.of(card));
+            // when & then
+            assertThatThrownBy(() -> cardService.changeTodoCardDone(card.getId(), user2, doneStatusRequestDto))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage("작성자만 수정 할 수 있습니다");
+        }
     }
+
 }
