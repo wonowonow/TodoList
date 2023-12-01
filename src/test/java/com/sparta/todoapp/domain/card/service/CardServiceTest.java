@@ -1,5 +1,6 @@
 package com.sparta.todoapp.domain.card.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -14,12 +15,14 @@ import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.repository.CardRepository;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
+import com.sparta.todoapp.global.exception.CustomException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -52,24 +55,41 @@ class CardServiceTest {
         verify(cardRepository, times(1)).save(any(Card.class));
     }
 
-    @Test
-    @DisplayName("카드 불러오기 테스트")
-    void test2() {
-        // given
-        Long cardId = 1L;
-        CardService cardService = new CardService(cardRepository);
-        User user = new User();
-        Card card = new Card("제목", "내용", user);
+    @Nested
+    @DisplayName("카드 불러오기 모음")
+    class getCard{
+        @Test
+        @DisplayName("카드 불러오기 테스트 - 성공")
+        void 카드_불러오기_테스트_성공() {
+            // given
+            Long cardId = 1L;
+            CardService cardService = new CardService(cardRepository);
+            User user = new User();
+            Card card = new Card("제목", "내용", user);
 
-        given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
-        // when
-        CardResponseDto result = cardService.getTodoCard(cardId);
-        // then
-        Assertions.assertEquals(card.getTitle(), result.getTitle());
-        Assertions.assertEquals(card.getContent(), result.getContent());
-        Assertions.assertEquals(card.getUser().getUsername(), result.getAuthor());
+            given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
+            // when
+            CardResponseDto result = cardService.getTodoCard(cardId);
+            // then
+            Assertions.assertEquals(card.getTitle(), result.getTitle());
+            Assertions.assertEquals(card.getContent(), result.getContent());
+            Assertions.assertEquals(card.getUser().getUsername(), result.getAuthor());
+        }
+
+        @Test
+        @DisplayName("카드 불러오기 테스트 - 실패")
+        void 카드_불러오기_테스트_실패() {
+            // given
+            Long cardId = 1L;
+            CardService cardService = new CardService(cardRepository);
+
+            given(cardRepository.findById(cardId)).willReturn(Optional.empty());
+            // when & then
+            assertThatThrownBy(()->cardService.getTodoCard(cardId))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage("해당 투 두 카드는 존재하지 않습니다.");
+        }
     }
-
     @Test
     @DisplayName("카드 여러개 불러오기 테스트")
     void test3() {
