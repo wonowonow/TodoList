@@ -23,10 +23,10 @@ public class CommentController {
     }
 
     @PostMapping("/todos/{cardId}/comments")
-    public CommentResponseDto createComment(@PathVariable Long cardId,
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long cardId,
             @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal
     UserDetailsImpl userDetails) {
-        return commentService.createComment(cardId, commentRequestDto, userDetails.getUser());
+        return ResponseEntity.status(201).body(commentService.createComment(cardId, commentRequestDto, userDetails.getUser()));
     }
 
     @PutMapping("/todos/{cardId}/comments/{commentId}")
