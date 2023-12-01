@@ -9,6 +9,7 @@ import com.sparta.todoapp.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,10 +29,10 @@ public class CardController {
     }
 
     @PostMapping("/todos")
-    public CardPostRequestDto createTodoCard(
+    public ResponseEntity<CardResponseDto> createTodoCard(
             @RequestBody @Valid CardPostRequestDto cardPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        cardService.createTodoCard(cardPostRequestDto, userDetails.getUser());
-        return cardPostRequestDto;
+        CardResponseDto responseDto = cardService.createTodoCard(cardPostRequestDto, userDetails.getUser());
+        return ResponseEntity.status(201).body(responseDto);
     }
 
     @GetMapping("/todos")

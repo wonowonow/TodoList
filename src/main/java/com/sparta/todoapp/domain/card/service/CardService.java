@@ -24,12 +24,13 @@ public class CardService {
         this.cardRepository = cardRepository;
     }
 
-    public void createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
+    public CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
 
         String title = cardPostRequestDto.getTitle();
         String content = cardPostRequestDto.getContent();
         Card card = new Card(title, content, user);
         cardRepository.save(card);
+        return new CardResponseDto(card);
     }
 
     public Map<String, List<CardListResponseDto>> getTodoCards() {

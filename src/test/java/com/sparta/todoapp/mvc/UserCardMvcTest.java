@@ -1,7 +1,10 @@
 package com.sparta.todoapp.mvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.todoapp.domain.card.controller.CardController;
+import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
+import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.card.service.CardService;
 import com.sparta.todoapp.domain.user.controller.UserController;
 import com.sparta.todoapp.domain.user.dto.SignupRequestDto;
@@ -10,6 +13,7 @@ import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import com.sparta.todoapp.domain.user.service.UserService;
 import com.sparta.todoapp.global.config.WebSecurityConfig;
 import com.sparta.todoapp.global.security.UserDetailsImpl;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,10 +33,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(
@@ -61,6 +70,8 @@ public class UserCardMvcTest {
     @MockBean
     CardService cardService;
 
+    UserDetailsImpl testUserDetails;
+
     @BeforeEach
     void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(context)
@@ -73,7 +84,7 @@ public class UserCardMvcTest {
         String password = "password";
         UserRoleEnum role = UserRoleEnum.USER;
         User user = new User(username, password, role);
-        UserDetailsImpl testUserDetails = new UserDetailsImpl(user);
+        testUserDetails = new UserDetailsImpl(user);
         mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "",
                 testUserDetails.getAuthorities());
     }
@@ -94,6 +105,38 @@ public class UserCardMvcTest {
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("회원가입이 완료 되었습니다.")))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("카드 생성 테스트")
+    void test2() throws Exception {
+        // given
+        this.mockUserSetup();
+        CardController controller = new CardController(cardService);
+        CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
+        cardPostRequestDto.setTitle("제목");
+        cardPostRequestDto.setContent("내용");
+        String cardPostRequestJson = objectMapper.writeValueAsString(cardPostRequestDto);
+        CardResponseDto cardResponseDto = new CardResponseDto();
+        cardResponseDto.setAuthor("username");
+        cardResponseDto.setContent("내용");
+        cardResponseDto.setTitle("제목");
+        cardResponseDto.setIsDone(false);
+        String title = "$.title";
+        given(cardService.createTodoCard(any(CardPostRequestDto.class), any(User.class)))
+                .willReturn(cardResponseDto);
+
+
+        // when - then
+        mvc.perform(post("/todos")
+                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                .content(cardPostRequestJson)
+                .accept(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                .principal(mockPrincipal)
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath(title, is("제목")))
                 .andDo(print());
     }
 }
