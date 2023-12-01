@@ -64,4 +64,23 @@ class CommentServiceTest {
         Assertions.assertEquals(content, result.getContent());
         Assertions.assertEquals(user.getUsername(), result.getAuthor());
     }
+
+    @Test
+    @DisplayName("댓글 수정 테스트")
+    void 한글로도_테스트이름_설정_가능() {
+        // given
+        String content = "내용";
+        Comment comment = new Comment(content, user, card);
+        comment.setId(1L);
+        Long commentId = comment.getId();
+        CommentRequestDto requestDto = new CommentRequestDto();
+        requestDto.setContent("수정");
+        given(commentRepository.findById(commentId)).willReturn(Optional.of(comment));
+        // when
+        CommentResponseDto result = commentService.editComment(commentId, requestDto, user);
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(requestDto.getContent(), result.getContent());
+        Assertions.assertEquals(user.getUsername(), result.getAuthor());
+    }
 }
