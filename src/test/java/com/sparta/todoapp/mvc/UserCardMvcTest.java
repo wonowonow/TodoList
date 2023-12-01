@@ -3,8 +3,12 @@ package com.sparta.todoapp.mvc;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -18,10 +22,13 @@ import com.sparta.todoapp.domain.card.controller.CardController;
 import com.sparta.todoapp.domain.card.dto.CardDoneStatusRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
+import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.service.CardService;
 import com.sparta.todoapp.domain.comment.controller.CommentController;
 import com.sparta.todoapp.domain.comment.dto.CommentRequestDto;
 import com.sparta.todoapp.domain.comment.dto.CommentResponseDto;
+import com.sparta.todoapp.domain.comment.entity.Comment;
+import com.sparta.todoapp.domain.comment.repository.CommentRepository;
 import com.sparta.todoapp.domain.comment.service.CommentService;
 import com.sparta.todoapp.domain.user.controller.UserController;
 import com.sparta.todoapp.domain.user.dto.SignupRequestDto;
@@ -76,6 +83,9 @@ public class UserCardMvcTest {
 
     @MockBean
     CommentService commentService;
+
+    @MockBean
+    CommentRepository commentRepository;
 
     UserDetailsImpl testUserDetails;
 
@@ -214,10 +224,11 @@ public class UserCardMvcTest {
 
     @Test
     @DisplayName("댓글 생성 테스트")
-    void 댓글_생성_테스트() throws Exception{
+    void 댓글_생성_테스트() throws Exception {
         // Given
         mockUserSetup();
         String content = "댓글내용";
+        Long commentId = 1L;
         CommentRequestDto requestDto = new CommentRequestDto();
         requestDto.setContent(content);
         CommentResponseDto responseDto = new CommentResponseDto();
@@ -226,16 +237,72 @@ public class UserCardMvcTest {
         String requestJSON = objectMapper.writeValueAsString(requestDto);
         String findAuthorAtResponse = "$.author";
         String findContentAtResponse = "$.content";
-        given(commentService.createComment(any(Long.class), any(CommentRequestDto.class), any(User.class))).willReturn(responseDto);
+        given(commentService.createComment(eq(commentId), any(CommentRequestDto.class),
+                any(User.class))).willReturn(responseDto);
         // When & Then
         mvc.perform(post("/todos/1/comments")
-                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
-                .accept(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
-                .principal(mockPrincipal)
-                .content(requestJSON)
-        )
+                        .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                        .accept(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                        .principal(mockPrincipal)
+                        .content(requestJSON)
+                )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath(findContentAtResponse, is("댓글내용")))
                 .andExpect(jsonPath(findAuthorAtResponse, is("username")));
+    }
+
+    @Test
+    @DisplayName("댓글 수정 테스트")
+    void 댓글_수정_테스트() throws Exception {
+        //given
+        mockUserSetup();
+        String content = "수정댓글";
+        Long commentId = 1L;
+        CommentRequestDto requestDto = new CommentRequestDto();
+        requestDto.setContent(content);
+        String requestJson = objectMapper.writeValueAsString(requestDto);
+        CommentResponseDto responseDto = new CommentResponseDto();
+        responseDto.setAuthor("username");
+        responseDto.setContent("댓글내용");
+        String findAuthorAtResponse = "$.author";
+        String findContentAtResponse = "$.content";
+
+        given(commentService.editComment(eq(commentId), any(CommentRequestDto.class),
+                any(User.class))).willReturn(responseDto);
+        // when & then
+        mvc.perform(put("/todos/1/comments/1")
+                        .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                        .accept(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                        .content(requestJson)
+                        .principal(mockPrincipal)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(findAuthorAtResponse, is("username")))
+                .andExpect(jsonPath(findContentAtResponse, is("댓글내용")));
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 테스트")
+    void 댓글_삭제_테스트() throws Exception {
+        //given
+        mockUserSetup();
+        String username = "username";
+        String password = "password";
+        UserRoleEnum role = UserRoleEnum.USER;
+        User user = new User(username, password, role);
+        String cardTitle = "제목";
+        String cardContent = "내용";
+        Card card = new Card(cardTitle, cardContent, user);
+        String commentContent = "댓글내용";
+        Long commentId = 1L;
+        Comment comment = new Comment(commentContent, user, card);
+        comment.setId(commentId);
+        commentRepository.save(comment);
+        // when & then
+        mvc.perform(delete("/todos/1/comments/1")
+                .principal(mockPrincipal)
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("댓글이 삭제 되었습니다.")));
     }
 }
