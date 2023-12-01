@@ -115,9 +115,9 @@ public class UserCardMvcTest {
         @DisplayName("회원 가입 테스트")
         void test1() throws Exception {
             // given
-            SignupRequestDto signupRequestDto = new SignupRequestDto();
-            signupRequestDto.setUsername("username");
-            signupRequestDto.setPassword("password");
+            String username = "username";
+            String password = "password";
+            SignupRequestDto signupRequestDto = new SignupRequestDto(username, password);
             String signupRequestJson = objectMapper.writeValueAsString(signupRequestDto);
 
             // when - then

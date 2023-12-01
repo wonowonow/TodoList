@@ -16,6 +16,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -56,6 +57,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
 
+    @Builder
     public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;

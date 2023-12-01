@@ -34,9 +34,7 @@ class UserServiceTest {
         String username = "username";
         String password = "password";
 
-        SignupRequestDto signupRequestDto = new SignupRequestDto();
-        signupRequestDto.setUsername(username);
-        signupRequestDto.setPassword(password);
+        SignupRequestDto signupRequestDto = new SignupRequestDto(username, password);
 
         UserService userService = new UserService(userRepository, passwordEncoder);
 
