@@ -137,5 +137,6 @@ class CardServiceTest {
         Assertions.assertNotNull(result);
         Assertions.assertEquals(cardResponseDto.getTitle(), result.getTitle());
         Assertions.assertEquals(cardResponseDto.getContent(), result.getContent());
+        Assertions.assertTrue(result.getIsDone());
     }
 }
