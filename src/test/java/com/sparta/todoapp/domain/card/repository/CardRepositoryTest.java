@@ -7,6 +7,8 @@ import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import com.sparta.todoapp.domain.user.repository.UserRepository;
+import com.sparta.todoapp.global.exception.CustomException;
+import com.sparta.todoapp.global.exception.ExceptionCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,5 +48,21 @@ class CardRepositoryTest {
         Assertions.assertEquals(title, savedCard.getTitle());
         Assertions.assertEquals(content, savedCard.getContent());
         Assertions.assertFalse(savedCard.getIsDone());
+    }
+
+    @Test
+    @DisplayName("카드 단 건 불러오기 테스트")
+    void 카드_단_건_불러오기_테스트() {
+        // Given
+        String title = "제목";
+        String content = "내용";
+        cardRepository.save(new Card(title, content, user));
+        // When
+        Card savedCard = cardRepository.findById(1L).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
+        );
+        // Then
+        Assertions.assertEquals(title, savedCard.getTitle());
+        Assertions.assertEquals(content, savedCard.getContent());
     }
 }
