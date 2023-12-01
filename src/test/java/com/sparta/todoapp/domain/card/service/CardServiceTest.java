@@ -57,7 +57,8 @@ class CardServiceTest {
 
     @Nested
     @DisplayName("카드 불러오기 모음")
-    class getCard{
+    class getCard {
+
         @Test
         @DisplayName("카드 불러오기 테스트 - 성공")
         void 카드_불러오기_테스트_성공() {
@@ -85,17 +86,18 @@ class CardServiceTest {
 
             given(cardRepository.findById(cardId)).willReturn(Optional.empty());
             // when & then
-            assertThatThrownBy(()->cardService.getTodoCard(cardId))
+            assertThatThrownBy(() -> cardService.getTodoCard(cardId))
                     .isInstanceOf(CustomException.class)
                     .hasMessage("해당 투 두 카드는 존재하지 않습니다.");
         }
     }
+
     @Test
     @DisplayName("카드 여러개 불러오기 테스트")
     void test3() {
         // given
         CardService cardService = new CardService(cardRepository);
-        User user1 = new User("username1","password1", UserRoleEnum.USER);
+        User user1 = new User("username1", "password1", UserRoleEnum.USER);
         User user2 = new User("username2", "password2", UserRoleEnum.USER);
         List<Card> cardList = new ArrayList<>();
         cardList.add(new Card("제목 1", "내용 1", user1));
@@ -116,26 +118,51 @@ class CardServiceTest {
         Assertions.assertEquals("제목 3", result.get(user1.getUsername()).get(1).getTitle());
     }
 
-    @Test
-    @DisplayName("카드 변경 테스트")
-    void test4() {
-        // given
-        CardService cardService = new CardService(cardRepository);
-        CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
-        Long cardId = 1L;
-        String title = "수정 제목";
-        String content = "수정 내용";
-        User user = new User("username", "password", UserRoleEnum.USER);
-        user.setId(1L);
-        Card card = new Card("제목", "내용", user);
-        cardPostRequestDto.setTitle(title);
-        cardPostRequestDto.setContent(content);
-        given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
-        // when
-        CardResponseDto result = cardService.editTodoCard(cardPostRequestDto, cardId, user);
-        // then
-        Assertions.assertEquals(title, result.getTitle());
+    @Nested
+    class 카드_변경 {
+
+        @Test
+        @DisplayName("카드 변경 테스트 - 성공")
+        void 카드_변경_테스트_성공() {
+            // given
+            CardService cardService = new CardService(cardRepository);
+            CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
+            Long cardId = 1L;
+            String title = "수정 제목";
+            String content = "수정 내용";
+            User user = new User("username", "password", UserRoleEnum.USER);
+            user.setId(1L);
+            Card card = new Card("제목", "내용", user);
+            cardPostRequestDto.setTitle(title);
+            cardPostRequestDto.setContent(content);
+            given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
+            // when
+            CardResponseDto result = cardService.editTodoCard(cardPostRequestDto, cardId, user);
+            // then
+            Assertions.assertEquals(title, result.getTitle());
+        }
+
+        @Test
+        @DisplayName("카드 변경 테스트 - 실패")
+        void 카드_변경_테스트_실패() {
+            // given
+            CardService cardService = new CardService(cardRepository);
+            CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
+            Long cardId = 1L;
+            String title = "수정 제목";
+            String content = "수정 내용";
+            User user = new User("username", "password", UserRoleEnum.USER);
+            user.setId(1L);
+            Card card = new Card("제목", "내용", user);
+            cardPostRequestDto.setTitle(title);
+            cardPostRequestDto.setContent(content);
+            given(cardRepository.findById(cardId)).willReturn(Optional.empty());
+            // when & then
+            assertThatThrownBy(() -> cardService.editTodoCard(cardPostRequestDto, cardId, user)).isInstanceOf(
+                    CustomException.class).hasMessage("해당 투 두 카드는 존재하지 않습니다.");
+        }
     }
+
 
     @Test
     @DisplayName("카드 상태 변경 테스트")
@@ -151,7 +178,8 @@ class CardServiceTest {
         doneStatusRequestDto.setIsDone(true);
         given(cardRepository.findById(card.getId())).willReturn(Optional.of(card));
         // when
-        CardResponseDto result = cardService.changeTodoCardDone(card.getId(), user, doneStatusRequestDto);
+        CardResponseDto result = cardService.changeTodoCardDone(card.getId(), user,
+                doneStatusRequestDto);
         // then
         Assertions.assertNotNull(result);
         Assertions.assertEquals(cardResponseDto.getTitle(), result.getTitle());
