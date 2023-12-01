@@ -83,4 +83,18 @@ class CommentServiceTest {
         Assertions.assertEquals(requestDto.getContent(), result.getContent());
         Assertions.assertEquals(user.getUsername(), result.getAuthor());
     }
+
+    @Test
+    @DisplayName("댓글 삭제 테스트")
+    void 댓글_삭제() {
+        // given
+        Comment comment = new Comment("내용", user, card);
+        comment.setId(1L);
+        Long commentId = comment.getId();
+        given(commentRepository.findById(commentId)).willReturn(Optional.of(comment));
+        // when
+        commentService.deleteComment(commentId, user);
+        // then
+        verify(commentRepository, times(1)).delete(any(Comment.class));
+    }
 }
