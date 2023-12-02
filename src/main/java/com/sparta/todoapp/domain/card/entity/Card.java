@@ -41,11 +41,11 @@ public class Card {
     private String title;
 
     @NotEmpty
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
-    private Boolean isDone = false;
+    private Boolean isDone;
 
     @CreatedDate
     @Column(updatable = false)
