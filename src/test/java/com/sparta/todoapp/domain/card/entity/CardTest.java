@@ -17,7 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @DataJpaTest
-@DisplayName("Card Entity 테스트 코드")
+@DisplayName("Card Entity JPA 테스트 코드")
 class CardTest {
 
     @Autowired
