@@ -1,0 +1,70 @@
+package com.sparta.todoapp.domain.comment.service;
+
+import com.sparta.todoapp.domain.card.entity.Card;
+import com.sparta.todoapp.domain.card.repository.CardRepository;
+import com.sparta.todoapp.domain.comment.dto.CommentRequestDto;
+import com.sparta.todoapp.domain.comment.dto.CommentResponseDto;
+import com.sparta.todoapp.domain.comment.entity.Comment;
+import com.sparta.todoapp.domain.comment.repository.CommentRepository;
+import com.sparta.todoapp.domain.user.entity.User;
+import com.sparta.todoapp.global.exception.CustomException;
+import com.sparta.todoapp.global.exception.ExceptionCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class CommentServiceImpl implements CommentService {
+
+    private final CommentRepository commentRepository;
+
+    private final CardRepository cardRepository;
+
+    @Override
+    public CommentResponseDto createComment(Long cardId, CommentRequestDto commentRequestDto,
+            User user) {
+
+        String content = commentRequestDto.getContent();
+        Card card = cardRepository.findById(cardId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
+        );
+        Comment comment = new Comment(content, user, card);
+        commentRepository.save(comment);
+
+        return new CommentResponseDto(comment);
+    }
+
+    @Override
+    @Transactional
+    public CommentResponseDto editComment(Long commentId,
+            CommentRequestDto commentRequestDto, User user) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
+        );
+
+        if (comment.getUser().getId().equals(user.getId())) {
+            comment.setContent(commentRequestDto.getContent());
+        } else {
+            throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
+        }
+
+        return new CommentResponseDto(comment);
+    }
+
+    @Override
+    public void deleteComment(Long commentId, User user) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
+        );
+
+        if (comment.getUser().getId().equals(user.getId())) {
+            commentRepository.delete(comment);
+        } else {
+            throw new CustomException(ExceptionCode.FORBIDDEN_DELETE_ONLY_WRITER);
+        }
+    }
+}
