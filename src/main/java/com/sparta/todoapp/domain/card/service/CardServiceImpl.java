@@ -22,6 +22,7 @@ public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
 
+    @Override
     public CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
 
         String title = cardPostRequestDto.getTitle();
@@ -31,6 +32,7 @@ public class CardServiceImpl implements CardService {
         return new CardResponseDto(card);
     }
 
+    @Override
     public Map<String, List<CardListResponseDto>> getTodoCards() {
 
         List<Card> cardList = cardRepository.findAllByOrderByCreatedAtDesc();
@@ -40,6 +42,7 @@ public class CardServiceImpl implements CardService {
                 .collect(Collectors.groupingBy(CardListResponseDto::getAuthor));
     }
 
+    @Override
     public CardResponseDto getTodoCard(Long cardId) {
         Card card = cardRepository.findById(cardId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
@@ -47,6 +50,7 @@ public class CardServiceImpl implements CardService {
         return new CardResponseDto(card);
     }
 
+    @Override
     @Transactional
     public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
             User user) {
@@ -63,6 +67,7 @@ public class CardServiceImpl implements CardService {
         return new CardResponseDto(card);
     }
 
+    @Override
     @Transactional
     public CardResponseDto changeTodoCardDone(Long cardId, User user,
             CardDoneStatusRequestDto cardDoneStatusRequestDto) {
