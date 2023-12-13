@@ -1,84 +1,49 @@
 package com.sparta.todoapp.domain.card.service;
 
-import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.card.dto.CardDoneStatusRequestDto;
-import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardListResponseDto;
-import com.sparta.todoapp.domain.card.entity.Card;
-import com.sparta.todoapp.domain.card.repository.CardRepository;
+import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
+import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.user.entity.User;
-import com.sparta.todoapp.global.exception.CustomException;
-import com.sparta.todoapp.global.exception.ExceptionCode;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class CardService {
+public interface CardService {
 
-    private final CardRepository cardRepository;
+    /**
+     * @param cardPostRequestDto 투 두 카드 생성 요청 정보
+     * @param user               투 두 카드 생성 요청자
+     * @return                   투 두 카드 생성 결과
+     */
+    CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user);
 
-    public CardService(CardRepository cardRepository) {
-        this.cardRepository = cardRepository;
-    }
+    /**
+     * @return                   유저별 투두 카드 목록
+     */
+    Map<String, List<CardListResponseDto>> getTodoCards();
 
-    public CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
+    /**
+     * @param cardId            투 두 카드 고유 번호
+     * @return                  고유 번호에 해당 하는 투 두 카드
+     */
+    CardResponseDto getTodoCard(Long cardId);
 
-        String title = cardPostRequestDto.getTitle();
-        String content = cardPostRequestDto.getContent();
-        Card card = new Card(title, content, user);
-        cardRepository.save(card);
-        return new CardResponseDto(card);
-    }
+    /**
+     * @param cardPostRequestDto 투 두 카드 수정 요청 정보
+     * @param cardId             투 두 카드 고유 번호
+     * @param user               투 두 카드 수정 요청자
+     * @return                   수정된 투 두 카드
+     */
+    CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
+            User user);
 
-    public Map<String, List<CardListResponseDto>> getTodoCards() {
-
-        List<Card> cardList = cardRepository.findAllByOrderByCreatedAtDesc();
-
-        return cardList.stream()
-                .map(CardListResponseDto::new)
-                .collect(Collectors.groupingBy(CardListResponseDto::getAuthor));
-    }
-
-    public CardResponseDto getTodoCard(Long cardId) {
-        Card card = cardRepository.findById(cardId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
-        );
-        CardResponseDto cardResponseDto = new CardResponseDto(card);
-        return cardResponseDto;
-    }
-
-    @Transactional
-    public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
-            User user) {
-        Card card = cardRepository.findById(cardId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
-        );
-        if (card.getUser().getId().equals(user.getId())) {
-            card.setContent(cardPostRequestDto.getContent());
-            card.setTitle(cardPostRequestDto.getTitle());
-        } else {
-            throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
-        }
-
-        return new CardResponseDto(card);
-    }
-
-    @Transactional
-    public CardResponseDto changeTodoCardDone(Long cardId, User user,
-            CardDoneStatusRequestDto cardDoneStatusRequestDto) {
-        Card card = cardRepository.findById(cardId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
-        );
-
-        if (card.getUser().getId().equals(user.getId())) {
-            card.setIsDone(cardDoneStatusRequestDto.getIsDone());
-        } else {
-            throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
-        }
-
-        return new CardResponseDto(card);
-    }
+    /**
+     * @param cardId                   투 두 카드 고유 번호
+     * @param user                     투 두 카드 상태 변경 요청자
+     * @param cardDoneStatusRequestDto 투 두 카드 상태 변경 요청 정보
+     * @return                         수정된 투 두 카드
+     */
+    CardResponseDto changeTodoCardDone(Long cardId, User user,
+            CardDoneStatusRequestDto cardDoneStatusRequestDto);
 }

@@ -13,30 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j(topic = "유저 서비스")
-public class UserService {
+public interface UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public void userSignup(SignupRequestDto signupRequestDto) {
-        log.info("유저 회원가입");
-        String username = signupRequestDto.getUsername();
-        String password = passwordEncoder.encode(signupRequestDto.getPassword());
-
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
-            throw new CustomException(ExceptionCode.BAD_REQUEST_USERNAME_ALREADY_IN_USE);
-        }
-
-        UserRoleEnum role = UserRoleEnum.USER;
-
-        User user = new User(username, password, role);
-        userRepository.save(user);
-    }
+    /**
+     * @param signupRequestDto 유저 회원 가입 요청 정보
+     */
+    void userSignup(SignupRequestDto signupRequestDto);
 }
