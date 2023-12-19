@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,7 +31,8 @@ public class CardController {
 
     @PostMapping("/todos")
     public ResponseEntity<CardResponseDto> createTodoCard(
-            @RequestBody @Valid CardPostRequestDto cardPostRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @RequestBody @Valid CardPostRequestDto cardPostRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CardResponseDto responseDto = cardService.createTodoCard(cardPostRequestDto, userDetails.getUser());
         return ResponseEntity.status(201).body(responseDto);
     }
@@ -46,12 +48,18 @@ public class CardController {
     }
 
     @PutMapping("/todos/{cardId}")
-    public CardResponseDto editTodoCard(@RequestBody @Valid CardPostRequestDto cardPostRequestDto,@PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public CardResponseDto editTodoCard(@RequestBody @Valid CardPostRequestDto cardPostRequestDto,
+            @PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return cardService.editTodoCard(cardPostRequestDto, cardId, userDetails.getUser());
     }
 
     @PatchMapping("/todos/{cardId}")
     public CardResponseDto changeTodoCardDone(@PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody CardDoneStatusRequestDto cardDoneStatusRequestDto){
         return cardService.changeTodoCardDone(cardId, userDetails.getUser(), cardDoneStatusRequestDto);
+    }
+
+    @GetMapping("/todos/search")
+    public List<CardListResponseDto> searchTodoCardWithHashTag(@RequestParam String searchHashTag) {
+        return cardService.searchTodoCardWithHashTag(searchHashTag);
     }
 }

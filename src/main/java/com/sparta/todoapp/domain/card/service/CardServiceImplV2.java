@@ -102,6 +102,11 @@ public class CardServiceImplV2 implements CardService {
         return new CardResponseDto(card);
     }
 
+    @Override
+    public List<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag) {
+        return cardRepository.findCardByHashTagCustom(searchHashTag);
+    }
+
     private Card getCard(Long cardId) {
         return cardRepository.findById(cardId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)

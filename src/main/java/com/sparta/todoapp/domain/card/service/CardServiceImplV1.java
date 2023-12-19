@@ -83,4 +83,9 @@ public class CardServiceImplV1 implements CardService {
 
         return new CardResponseDto(card);
     }
+
+    @Override
+    public List<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag) {
+        return null;
+    }
 }

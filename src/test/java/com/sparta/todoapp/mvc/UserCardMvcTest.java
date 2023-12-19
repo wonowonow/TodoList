@@ -51,10 +51,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+@ActiveProfiles("test")
 @WebMvcTest(
         controllers = {UserController.class, CardController.class, CommentController.class},
         excludeFilters = {
@@ -64,6 +67,7 @@ import org.springframework.web.context.WebApplicationContext;
                 )
         }
 )
+// ex. 밑의 Test 가 누구의 코드를 테스트 하는 것인가?
 public class UserCardMvcTest {
 
     private MockMvc mvc;

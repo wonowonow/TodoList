@@ -46,4 +46,6 @@ public interface CardService {
      */
     CardResponseDto changeTodoCardDone(Long cardId, User user,
             CardDoneStatusRequestDto cardDoneStatusRequestDto);
+
+    List<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag);
 }

@@ -1,6 +1,7 @@
 package com.sparta.todoapp.domain.card.entity;
 
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
+import com.sparta.todoapp.domain.card_hashtag.entity.CardHashTag;
 import com.sparta.todoapp.domain.comment.entity.Comment;
 import com.sparta.todoapp.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -60,15 +61,13 @@ public class Card {
     @OneToMany(mappedBy = "card")
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "card")
+    private List<CardHashTag> cardHashTags;
+
     public Card(String title, String content, User user) {
         this.title = title;
         this.content = content;
         this.user = user;
         this.isDone = false;
-    }
-
-    public Card(CardResponseDto cardResponseDto) {
-        this.title = cardResponseDto.getTitle();
-        this.content = cardResponseDto.getContent();
     }
 }
