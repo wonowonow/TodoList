@@ -36,7 +36,7 @@ class UserServiceTest {
 
         SignupRequestDto signupRequestDto = new SignupRequestDto(username, password);
 
-        UserService userService = new UserService(userRepository, passwordEncoder);
+        UserService userService = new UserServiceImpl(userRepository, passwordEncoder);
 
         given(userRepository.findByUsername(username)).willReturn(Optional.empty());
         //when

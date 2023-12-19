@@ -40,7 +40,7 @@ class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
-        commentService = new CommentService(commentRepository, cardRepository);
+        commentService = new CommentServiceImpl(commentRepository, cardRepository);
         user = new User("username", "password", UserRoleEnum.USER);
         user.setId(1L);
         card = new Card("제목", "내용", user);
