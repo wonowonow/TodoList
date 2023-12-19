@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotEmpty;
@@ -26,6 +27,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
+@Table(name = "comments")
 public class Comment {
 
     @Id
