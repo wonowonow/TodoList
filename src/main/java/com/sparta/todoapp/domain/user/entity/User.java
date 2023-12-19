@@ -33,7 +33,6 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -48,7 +47,6 @@ public class User {
 
     @CreatedDate
     @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user")
