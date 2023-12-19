@@ -1,7 +1,6 @@
 package com.sparta.todoapp.domain.card.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -47,7 +46,7 @@ class CardServiceTest {
         cardPostRequestDto.setTitle(title);
         cardPostRequestDto.setContent(content);
 
-        CardService cardService = new CardService(cardRepository);
+        CardService cardService = new CardServiceImplV1(cardRepository);
 
         // when
         cardService.createTodoCard(cardPostRequestDto, user);
@@ -64,7 +63,7 @@ class CardServiceTest {
         void 카드_불러오기_테스트_성공() {
             // given
             Long cardId = 1L;
-            CardService cardService = new CardService(cardRepository);
+            CardService cardService = new CardServiceImplV1(cardRepository);
             User user = new User();
             Card card = new Card("제목", "내용", user);
 
@@ -82,7 +81,7 @@ class CardServiceTest {
         void 카드_불러오기_테스트_실패() {
             // given
             Long cardId = 1L;
-            CardService cardService = new CardService(cardRepository);
+            CardService cardService = new CardServiceImplV1(cardRepository);
 
             given(cardRepository.findById(cardId)).willReturn(Optional.empty());
             // when & then
@@ -96,7 +95,7 @@ class CardServiceTest {
     @DisplayName("카드 여러개 불러오기 테스트")
     void test3() {
         // given
-        CardService cardService = new CardService(cardRepository);
+        CardService cardService = new CardServiceImplV1(cardRepository);
         User user1 = new User("username1", "password1", UserRoleEnum.USER);
         User user2 = new User("username2", "password2", UserRoleEnum.USER);
         List<Card> cardList = new ArrayList<>();
@@ -125,7 +124,7 @@ class CardServiceTest {
         @DisplayName("카드 변경 테스트 - 성공")
         void 카드_변경_테스트_성공() {
             // given
-            CardService cardService = new CardService(cardRepository);
+            CardService cardService = new CardServiceImplV1(cardRepository);
             CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
             Long cardId = 1L;
             String title = "수정 제목";
@@ -146,7 +145,7 @@ class CardServiceTest {
         @DisplayName("카드 변경 테스트 - 실패 (투 두 카드 없음)")
         void 카드_변경_테스트_실패_카드_없음() {
             // given
-            CardService cardService = new CardService(cardRepository);
+            CardService cardService = new CardServiceImplV1(cardRepository);
             CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
             Long cardId = 1L;
             String title = "수정 제목";
@@ -167,7 +166,7 @@ class CardServiceTest {
         @DisplayName("카드 변경 테스트 - 실패 (권한 없음)")
         void 카드_변경_테스트_실패_권한_없음() {
             // given
-            CardService cardService = new CardService(cardRepository);
+            CardService cardService = new CardServiceImplV1(cardRepository);
             CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
             Long cardId = 1L;
             String title = "수정 제목";
@@ -195,7 +194,7 @@ class CardServiceTest {
         @DisplayName("카드 상태 변경 테스트 - 성공")
         void 카드_상태_변경_테스트_성공() {
             // given
-            CardService cardService = new CardService(cardRepository);
+            CardService cardService = new CardServiceImplV1(cardRepository);
             User user = new User("username", "password", UserRoleEnum.USER);
             user.setId(1L);
             Card card = new Card("제목", "내용", user);
@@ -218,7 +217,7 @@ class CardServiceTest {
         @DisplayName("카드 상태 변경 테스트 - 실패 (투 두 카드 없음)")
         void 카드_상태_변경_테스트_실패_카드_없음() {
             // given
-            CardService cardService = new CardService(cardRepository);
+            CardService cardService = new CardServiceImplV1(cardRepository);
             User user = new User("username", "password", UserRoleEnum.USER);
             user.setId(1L);
             Card card = new Card("제목", "내용", user);
@@ -236,7 +235,7 @@ class CardServiceTest {
         @DisplayName("카드 상태 변경 테스트 - 실패 (권한 없음)")
         void 카드_상태_변경_테스트_실패_권한_없음() {
             // given
-            CardService cardService = new CardService(cardRepository);
+            CardService cardService = new CardServiceImplV1(cardRepository);
             User user1 = new User("username", "password", UserRoleEnum.USER);
             user1.setId(1L);
             User user2 = new User("username", "password", UserRoleEnum.USER);

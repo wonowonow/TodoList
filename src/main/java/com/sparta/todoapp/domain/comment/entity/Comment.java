@@ -30,29 +30,25 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "COMMENT_ID")
     private Long id;
 
     @NotEmpty
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String content;
 
     @CreatedDate
     @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(updatable = true)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime modifiedAt;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "CARD_ID", nullable = false)
+    @JoinColumn(name = "card_id", nullable = false)
     private Card card;
 
     public Comment(String content, User user, Card card) {
