@@ -47,7 +47,7 @@ class CardServiceTest {
         cardPostRequestDto.setTitle(title);
         cardPostRequestDto.setContent(content);
 
-fg        CardService cardService = new CardServiceImpl(cardRepository);
+        CardService cardService = new CardServiceImpl(cardRepository);
 
         // when
         cardService.createTodoCard(cardPostRequestDto, user);
