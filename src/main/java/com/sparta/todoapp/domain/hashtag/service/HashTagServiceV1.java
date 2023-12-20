@@ -57,4 +57,10 @@ public class HashTagServiceV1 implements HashTagService {
             cardHashTagRepository.save(cardHashTag);
         }
     }
+
+    @Override
+    public void deleteTag(Long cardId) {
+
+        cardHashTagRepository.deleteTagMappingByCardId(cardId);
+    }
 }

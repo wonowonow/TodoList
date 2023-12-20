@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +73,7 @@ public class CardServiceImplV2 implements CardService {
     }
 
     @Override // TODO 수정 시 지워진 해시태그 지우기...
+    @Transactional
     public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
             User user) {
         Card card = getCard(cardId);
@@ -82,6 +84,8 @@ public class CardServiceImplV2 implements CardService {
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
+
+        hashTagService.deleteTag(cardId);
 
         List<String> hashTagList = hashTagService.findHashTagByCardContent(card);
 
