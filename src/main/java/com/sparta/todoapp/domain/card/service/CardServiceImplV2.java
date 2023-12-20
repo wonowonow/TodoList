@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -103,8 +105,8 @@ public class CardServiceImplV2 implements CardService {
     }
 
     @Override
-    public List<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag) {
-        return cardRepository.findCardByHashTagCustom(searchHashTag);
+    public Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag, Pageable pageable) {
+        return cardRepository.findCardByHashTagCustom(searchHashTag, pageable);
     }
 
     private Card getCard(Long cardId) {

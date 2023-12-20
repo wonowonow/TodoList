@@ -9,6 +9,8 @@ import com.sparta.todoapp.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,7 +61,7 @@ public class CardController {
     }
 
     @GetMapping("/todos/search")
-    public List<CardListResponseDto> searchTodoCardWithHashTag(@RequestParam String searchHashTag) {
-        return cardService.searchTodoCardWithHashTag(searchHashTag);
+    public Page<CardListResponseDto> searchTodoCardWithHashTag(@RequestParam String searchHashTag, Pageable pageable) {
+        return cardService.searchTodoCardWithHashTag(searchHashTag, pageable);
     }
 }
