@@ -11,10 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CardPostRequestDto {
     @NotEmpty
-    String title;
+    private String title;
 
     @NotEmpty
-    String content;
+    private String content;
 
     public CardPostRequestDto(String title, String content) {
         this.title = title;

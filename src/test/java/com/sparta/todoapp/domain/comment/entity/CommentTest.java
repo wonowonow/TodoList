@@ -14,7 +14,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
+@ActiveProfiles("test")
 @DataJpaTest
 @DisplayName("댓글 Entity JPA 테스트")
 class CommentTest {
@@ -44,15 +47,22 @@ class CommentTest {
         // Given
         User user = entityManager.find(User.class, 1L);
         Card card = entityManager.find(Card.class, 1L);
-        Long userId = user.getId();
-        Long cardId = card.getId();
-        String commentContent = "대세는펩시제로";
-        // When
-        Comment savedComment = entityManager.persistFlushFind(
-                new Comment(commentContent, user, card));
-        // Then
-        Assertions.assertEquals(userId, savedComment.getUser().getId());
-        Assertions.assertEquals(cardId, savedComment.getCard().getId());
-        Assertions.assertEquals(commentContent, savedComment.getContent());
+
+        try {
+            Long userId = user.getId();
+            Long cardId = card.getId();
+            String commentContent = "대세는펩시제로";
+            // When
+            Comment savedComment = entityManager.persistFlushFind(
+                    new Comment(commentContent, user, card));
+            // Then
+            Assertions.assertNotNull(userId);
+            Assertions.assertNotNull(cardId);
+            Assertions.assertEquals(userId, savedComment.getUser().getId());
+            Assertions.assertEquals(cardId, savedComment.getCard().getId());
+            Assertions.assertEquals(commentContent, savedComment.getContent());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

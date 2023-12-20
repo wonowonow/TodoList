@@ -10,11 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CardResponseDto {
-    String title;
-    String content;
-    String author;
-    Boolean isDone;
-    LocalDateTime createdAt;
+    private String title;
+    private String content;
+    private String author;
+    private Boolean isDone;
+    private LocalDateTime createdAt;
 
     public CardResponseDto(Card card) {
         this.title = card.getTitle();

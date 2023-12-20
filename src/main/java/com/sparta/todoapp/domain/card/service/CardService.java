@@ -7,6 +7,8 @@ import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.user.entity.User;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 public interface CardService {
@@ -46,4 +48,6 @@ public interface CardService {
      */
     CardResponseDto changeTodoCardDone(Long cardId, User user,
             CardDoneStatusRequestDto cardDoneStatusRequestDto);
+
+    Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag, Pageable pageable);
 }

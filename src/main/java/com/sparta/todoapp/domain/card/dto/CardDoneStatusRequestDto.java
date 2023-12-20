@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CardDoneStatusRequestDto {
-    Boolean isDone;
+    private Boolean isDone;
 }

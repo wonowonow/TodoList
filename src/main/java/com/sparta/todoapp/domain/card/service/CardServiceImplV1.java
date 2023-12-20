@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,5 +84,10 @@ public class CardServiceImplV1 implements CardService {
         }
 
         return new CardResponseDto(card);
+    }
+
+    @Override
+    public Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag, Pageable pageable) {
+        return null;
     }
 }

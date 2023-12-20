@@ -1,6 +1,7 @@
 package com.sparta.todoapp.domain.card.entity;
 
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
+import com.sparta.todoapp.domain.card_hashtag.entity.CardHashTag;
 import com.sparta.todoapp.domain.comment.entity.Comment;
 import com.sparta.todoapp.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +29,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
+@Table(name = "cards")
 public class Card {
 
     @Id
@@ -58,15 +61,13 @@ public class Card {
     @OneToMany(mappedBy = "card")
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "card")
+    private List<CardHashTag> cardHashTags;
+
     public Card(String title, String content, User user) {
         this.title = title;
         this.content = content;
         this.user = user;
         this.isDone = false;
-    }
-
-    public Card(CardResponseDto cardResponseDto) {
-        this.title = cardResponseDto.getTitle();
-        this.content = cardResponseDto.getContent();
     }
 }
