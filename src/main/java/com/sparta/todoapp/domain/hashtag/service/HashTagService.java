@@ -18,4 +18,11 @@ public interface HashTagService {
      * @param card
      */
     void saveTag(List<String> hashTagList, Card card);
+
+    /**
+     * 카드_해시태그 매핑 테이블에 매개변수로 받은 카드 아이디 삭제
+     * 해시태크 테이블은 미삭제
+     * @param cardId
+     */
+    void deleteTag(Long cardId);
 }
