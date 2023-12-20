@@ -12,6 +12,8 @@ import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.repository.CardRepository;
+import com.sparta.todoapp.domain.hashtag.repository.HashTagRepository;
+import com.sparta.todoapp.domain.hashtag.service.HashTagService;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import com.sparta.todoapp.global.exception.CustomException;
@@ -26,6 +28,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
@@ -34,6 +40,10 @@ class CardServiceTest {
 
     @Mock
     CardRepository cardRepository;
+
+    @Mock
+    HashTagService hashTagService;
+
 
     @Test
     @DisplayName("카드 생성 테스트")
@@ -47,13 +57,14 @@ class CardServiceTest {
         cardPostRequestDto.setTitle(title);
         cardPostRequestDto.setContent(content);
 
-        CardService cardService = new CardServiceImplV1(cardRepository);
+        CardService cardService = new CardServiceImplV2(cardRepository, hashTagService);
 
         // when
         cardService.createTodoCard(cardPostRequestDto, user);
         // then
         verify(cardRepository, times(1)).save(any(Card.class));
     }
+
 
     @Nested
     @DisplayName("카드 불러오기 모음")
@@ -228,10 +239,12 @@ class CardServiceTest {
             doneStatusRequestDto.setIsDone(true);
             given(cardRepository.findById(card.getId())).willReturn(Optional.empty());
             // when & then
-            assertThatThrownBy(() -> cardService.changeTodoCardDone(card.getId(), user, doneStatusRequestDto))
+            assertThatThrownBy(
+                    () -> cardService.changeTodoCardDone(card.getId(), user, doneStatusRequestDto))
                     .isInstanceOf(CustomException.class)
                     .hasMessage("해당 투 두 카드는 존재하지 않습니다.");
         }
+
         @Test
         @DisplayName("카드 상태 변경 테스트 - 실패 (권한 없음)")
         void 카드_상태_변경_테스트_실패_권한_없음() {
@@ -248,10 +261,41 @@ class CardServiceTest {
             doneStatusRequestDto.setIsDone(true);
             given(cardRepository.findById(card.getId())).willReturn(Optional.of(card));
             // when & then
-            assertThatThrownBy(() -> cardService.changeTodoCardDone(card.getId(), user2, doneStatusRequestDto))
+            assertThatThrownBy(
+                    () -> cardService.changeTodoCardDone(card.getId(), user2, doneStatusRequestDto))
                     .isInstanceOf(CustomException.class)
                     .hasMessage("작성자만 수정 할 수 있습니다");
         }
     }
 
+    @Nested
+    class 카드_검색_테스트_모음 {
+
+        @Test
+        @DisplayName("해시태그 기준 검색")
+        void 해시태그() {
+            // Given
+            CardService cardService = new CardServiceImplV2(cardRepository, hashTagService);
+
+            String title = "제목";
+            String content = "앞#내용 뒤 띄어쓰기";
+
+            User user = User.builder()
+                    .username("username")
+                    .password("password")
+                    .role(UserRoleEnum.USER)
+                    .build();
+
+            Pageable pageable = PageRequest.of(0, 1);
+            Card card = new Card(title, content, user);
+            Page<CardListResponseDto> result = new PageImpl<>(List.of(new CardListResponseDto(card)));
+
+            given(cardService.searchTodoCardWithHashTag("#내용", pageable)).willReturn(result);
+            // When
+            Page<CardListResponseDto> searchedTodoCard = cardService.searchTodoCardWithHashTag("#내용", pageable);
+            // Then
+            Assertions.assertNotNull(searchedTodoCard);
+            Assertions.assertEquals(result, searchedTodoCard);
+        }
+    }
 }
