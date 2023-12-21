@@ -46,7 +46,9 @@ public class CardQueryRepositoryImpl implements CardQueryRepository {
                         card.title,
                         card.user.username.as("author"),
                         card.createdAt,
-                        card.isDone))
+                        card.isDone,
+                        card.imageUrl
+                ))
                 .from(cardHashTag)
                 .join(cardHashTag.hashTag, hashTag)
                 .join(cardHashTag.card, card)

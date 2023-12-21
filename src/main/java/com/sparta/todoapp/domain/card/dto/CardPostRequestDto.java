@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -15,6 +16,8 @@ public class CardPostRequestDto {
 
     @NotEmpty
     private String content;
+
+    private MultipartFile file;
 
     public CardPostRequestDto(String title, String content) {
         this.title = title;

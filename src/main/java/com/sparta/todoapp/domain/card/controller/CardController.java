@@ -16,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class CardController {
@@ -34,11 +36,14 @@ public class CardController {
     }
 
     @PostMapping("/todos")
+
     public ResponseEntity<CardResponseDto> createTodoCard(
-            @RequestBody @Valid CardPostRequestDto cardPostRequestDto,
+            @ModelAttribute @Valid CardPostRequestDto cardPostRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
         CardResponseDto responseDto = cardService.createTodoCard(cardPostRequestDto,
                 userDetails.getUser());
+
         return ResponseEntity.status(201).body(responseDto);
     }
 
