@@ -86,6 +86,7 @@ public class CardServiceImplV2 implements CardService {
     }
 
     @Override
+    @Transactional
     public CardResponseDto changeTodoCardDone(Long cardId, User user,
             CardDoneStatusRequestDto cardDoneStatusRequestDto) {
 
