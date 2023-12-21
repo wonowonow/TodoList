@@ -5,21 +5,27 @@ import static com.sparta.todoapp.domain.card_hashtag.entity.QCardHashTag.*;
 import static com.sparta.todoapp.domain.hashtag.entity.QHashTag.*;
 import static com.sparta.todoapp.domain.user.entity.QUser.*;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.todoapp.domain.card.dto.CardListResponseDto;
 import com.sparta.todoapp.domain.card.dto.QCardListResponseDto;
+import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.entity.QCard;
 import com.sparta.todoapp.domain.card_hashtag.entity.QCardHashTag;
 import com.sparta.todoapp.domain.hashtag.entity.HashTag;
 import com.sparta.todoapp.domain.hashtag.entity.QHashTag;
 import com.sparta.todoapp.domain.user.entity.QUser;
 import jakarta.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 public class CardQueryRepositoryImpl implements CardQueryRepository {
@@ -46,7 +52,7 @@ public class CardQueryRepositoryImpl implements CardQueryRepository {
                 .join(cardHashTag.card, card)
                 .join(card.user, user)
                 .where(hashTag.name.eq(searchHashTag))
-                .orderBy(card.createdAt.desc())
+                .orderBy(getOrderSpecifier(pageable.getSort()).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -60,5 +66,18 @@ public class CardQueryRepositoryImpl implements CardQueryRepository {
                 .where(hashTag.name.eq(searchHashTag));
 
         return PageableExecutionUtils.getPage(content, pageable, total::fetchOne);
+    }
+
+    private List<OrderSpecifier> getOrderSpecifier(Sort sort) {
+        List<OrderSpecifier> orders = new ArrayList<>();
+
+        sort.stream().forEach(order -> {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            String prop = order.getProperty();
+            PathBuilder orderByExpression = new PathBuilder<>(Card.class, "card");
+            orders.add(new OrderSpecifier(direction, orderByExpression.get(prop)));
+        });
+
+        return orders;
     }
 }
