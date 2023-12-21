@@ -14,6 +14,7 @@ import com.sparta.todoapp.domain.card_hashtag.entity.QCardHashTag;
 import com.sparta.todoapp.domain.hashtag.entity.HashTag;
 import com.sparta.todoapp.domain.hashtag.entity.QHashTag;
 import com.sparta.todoapp.domain.user.entity.QUser;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,10 +22,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
-@RequiredArgsConstructor
 public class CardQueryRepositoryImpl implements CardQueryRepository {
 
+    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
+
+    public CardQueryRepositoryImpl(EntityManager em) {
+        this.em = em;
+        this.queryFactory = new JPAQueryFactory(em);
+    }
 
     @Override
     public Page<CardListResponseDto> findCardByHashTagCustom(String searchHashTag, Pageable pageable) {
