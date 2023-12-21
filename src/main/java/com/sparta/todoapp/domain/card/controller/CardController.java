@@ -58,7 +58,7 @@ public class CardController {
     }
 
     @PutMapping("/todos/{cardId}")
-    public CardResponseDto editTodoCard(@RequestBody @Valid CardPostRequestDto cardPostRequestDto,
+    public CardResponseDto editTodoCard(@ModelAttribute @Valid CardPostRequestDto cardPostRequestDto,
             @PathVariable Long cardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return cardService.editTodoCard(cardPostRequestDto, cardId, userDetails.getUser());
     }

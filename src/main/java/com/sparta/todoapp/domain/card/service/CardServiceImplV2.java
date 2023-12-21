@@ -86,9 +86,18 @@ public class CardServiceImplV2 implements CardService {
 
         Card card = getCard(cardId);
 
+        MultipartFile multipartFile = cardPostRequestDto.getFile();
+
+        String imageUrl = null;
+
+        if(multipartFile != null) {
+            imageUrl = s3UploadService.saveFile(multipartFile);
+        }
+
         if (card.getUser().getId().equals(user.getId())) {
             card.setContent(cardPostRequestDto.getContent());
             card.setTitle(cardPostRequestDto.getTitle());
+            card.setImageUrl(imageUrl);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
