@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -87,7 +88,8 @@ public class CardServiceImplV1 implements CardService {
     }
 
     @Override
-    public Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag, Pageable pageable) {
+    public Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag,
+            Pageable pageable) {
 
         return cardRepository.findCardByHashTagCustom(searchHashTag, pageable);
     }

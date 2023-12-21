@@ -12,6 +12,7 @@ import lombok.Setter;
 public class CardResponseDto {
     private String title;
     private String content;
+    private String imageUrl;
     private String author;
     private Boolean isDone;
     private LocalDateTime createdAt;
@@ -19,6 +20,7 @@ public class CardResponseDto {
     public CardResponseDto(Card card) {
         this.title = card.getTitle();
         this.content = card.getContent();
+        this.imageUrl = card.getImageUrl();
         this.author = card.getUser().getUsername();
         this.isDone = card.getIsDone();
         this.createdAt = card.getCreatedAt();

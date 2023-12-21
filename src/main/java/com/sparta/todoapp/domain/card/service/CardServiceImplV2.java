@@ -7,9 +7,11 @@ import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.repository.CardRepository;
 import com.sparta.todoapp.domain.hashtag.service.HashTagService;
+import com.sparta.todoapp.domain.s3.S3UploadService;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.global.exception.CustomException;
 import com.sparta.todoapp.global.exception.ExceptionCode;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +30,28 @@ public class CardServiceImplV2 implements CardService {
 
     private final CardRepository cardRepository;
     private final HashTagService hashTagService;
+    private final S3UploadService s3UploadService;
 
     @Override
     public CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
 
         String title = cardPostRequestDto.getTitle();
         String content = cardPostRequestDto.getContent();
+        MultipartFile multipartFile = cardPostRequestDto.getFile();
 
-        Card card = new Card(title, content, user);
+        String imageUrl = null;
+
+        if (multipartFile != null) {
+            imageUrl = s3UploadService.saveFile(multipartFile);
+        }
+
+        Card card = Card.builder()
+                .title(title)
+                .content(content)
+                .imageUrl(imageUrl)
+                .isDone(false)
+                .user(user)
+                .build();
 
         cardRepository.save(card);
 
@@ -69,9 +86,18 @@ public class CardServiceImplV2 implements CardService {
 
         Card card = getCard(cardId);
 
+        MultipartFile multipartFile = cardPostRequestDto.getFile();
+
+        String imageUrl = null;
+
+        if(multipartFile != null) {
+            imageUrl = s3UploadService.saveFile(multipartFile);
+        }
+
         if (card.getUser().getId().equals(user.getId())) {
             card.setContent(cardPostRequestDto.getContent());
             card.setTitle(cardPostRequestDto.getTitle());
+            card.setImageUrl(imageUrl);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
@@ -102,7 +128,8 @@ public class CardServiceImplV2 implements CardService {
     }
 
     @Override
-    public Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag, Pageable pageable) {
+    public Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag,
+            Pageable pageable) {
 
         return cardRepository.findCardByHashTagCustom(searchHashTag, pageable);
     }

@@ -47,7 +47,6 @@ class CardRepositoryTest {
         Card savedCard = cardRepository.save(card);
         // then
         Assertions.assertNotNull(savedCard);
-//        Assertions.assertEquals(user.getId(), savedCard.getUser().getId());
         Assertions.assertEquals(title, savedCard.getTitle());
         Assertions.assertEquals(content, savedCard.getContent());
         Assertions.assertFalse(savedCard.getIsDone());

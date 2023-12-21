@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,6 +48,9 @@ public class Card {
     @Column(nullable = false)
     private Boolean isDone;
 
+    @Column(length = 500)
+    private String imageUrl;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -63,6 +67,15 @@ public class Card {
 
     @OneToMany(mappedBy = "card")
     private List<CardHashTag> cardHashTags;
+
+    @Builder
+    public Card(String title, String content, Boolean isDone, String imageUrl, User user) {
+        this.title = title;
+        this.content = content;
+        this.isDone = isDone;
+        this.imageUrl = imageUrl;
+        this.user = user;
+    }
 
     public Card(String title, String content, User user) {
         this.title = title;
