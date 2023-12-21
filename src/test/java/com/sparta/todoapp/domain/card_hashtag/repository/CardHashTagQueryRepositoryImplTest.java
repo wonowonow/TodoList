@@ -21,12 +21,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
-@Import(JpaConfig.class)
 @DataJpaTest
 class CardHashTagQueryRepositoryImplTest {
-
-    @Autowired
-    EntityManager em;
 
     @Autowired
     CardHashTagRepository cardHashTagRepository;
@@ -39,9 +35,6 @@ class CardHashTagQueryRepositoryImplTest {
 
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    JPAQueryFactory jpaQueryFactory;
 
     @Test
     void test() {
@@ -56,11 +49,7 @@ class CardHashTagQueryRepositoryImplTest {
         cardHashTagRepository.findById(savedCardHashTag.getId());
 
         System.out.println("--------------------------------------");
-        System.out.println("--------------------------------------");
-        System.out.println("--------------------------------------");
         cardHashTagRepository.deleteTagMappingByCardId(savedCard.getId());
-        System.out.println("------벌크연산 이후-------");
-        System.out.println("------벌크연산 이후-------");
         System.out.println("------벌크연산 이후-------");
         cardHashTagRepository.findById(cardHashTag.getId());
     }
