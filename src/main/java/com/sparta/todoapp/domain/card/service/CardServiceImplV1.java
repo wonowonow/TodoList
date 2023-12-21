@@ -88,6 +88,7 @@ public class CardServiceImplV1 implements CardService {
 
     @Override
     public Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag, Pageable pageable) {
-        return null;
+
+        return cardRepository.findCardByHashTagCustom(searchHashTag, pageable);
     }
 }

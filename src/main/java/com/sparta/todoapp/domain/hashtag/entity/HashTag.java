@@ -30,6 +30,7 @@ public class HashTag {
     @OneToMany(mappedBy = "hashTag")
     private List<CardHashTag> cardHashTags;
 
+    @Builder
     public HashTag(Long id, String name, List<CardHashTag> cardHashTags) {
         this.id = id;
         this.name = name;

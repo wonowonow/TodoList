@@ -34,18 +34,6 @@ public class CardServiceImplV2 implements CardService {
         String title = cardPostRequestDto.getTitle();
         String content = cardPostRequestDto.getContent();
 
-        // 만약 글 내용이
-        // 오늘 할 일 1. 2. 3.
-        // #화이팅 #아아 #으으으으 뒤에 이런 글이 더 있다면
-        // hashTags[0] = 오늘 할 일 1. 2. 3.
-        // hashTags[1] = #화이팅
-        // hashTags[2] = #아아
-        // hashTags[3] = #으으으으 뒤에 이런 글이 더 있다면
-        // 인데?
-        // 이걸 한 번 더 나눠서
-        // 정규 표현식 사용?
-        // #[^\s#]+ 해시 태그 모두 포함
-
         Card card = new Card(title, content, user);
 
         cardRepository.save(card);
@@ -68,14 +56,17 @@ public class CardServiceImplV2 implements CardService {
 
     @Override
     public CardResponseDto getTodoCard(Long cardId) {
+
         Card card = getCard(cardId);
+
         return new CardResponseDto(card);
     }
 
-    @Override // TODO 수정 시 지워진 해시태그 지우기...
+    @Override
     @Transactional
     public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
             User user) {
+
         Card card = getCard(cardId);
 
         if (card.getUser().getId().equals(user.getId())) {
@@ -97,6 +88,7 @@ public class CardServiceImplV2 implements CardService {
     @Override
     public CardResponseDto changeTodoCardDone(Long cardId, User user,
             CardDoneStatusRequestDto cardDoneStatusRequestDto) {
+
         Card card = getCard(cardId);
 
         if (card.getUser().getId().equals(user.getId())) {
@@ -110,10 +102,12 @@ public class CardServiceImplV2 implements CardService {
 
     @Override
     public Page<CardListResponseDto> searchTodoCardWithHashTag(String searchHashTag, Pageable pageable) {
+
         return cardRepository.findCardByHashTagCustom(searchHashTag, pageable);
     }
 
     private Card getCard(Long cardId) {
+
         return cardRepository.findById(cardId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
         );
