@@ -37,12 +37,20 @@ class CardRepositoryTest {
 
     @Test
     @DisplayName("카드 저장 테스트")
-    void 카드_저장_테스트(){
+    void 카드_저장_테스트() {
         //given
         String title = "제목";
         String content = "내용";
-        CardPostRequestDto cardPostRequestDto = new CardPostRequestDto(title, content);
-        Card card = new Card(cardPostRequestDto.getTitle(), cardPostRequestDto.getContent(), user);
+        CardPostRequestDto cardPostRequestDto = CardPostRequestDto
+                .builder()
+                .title(title)
+                .content(content)
+                .build();
+        Card card = Card.builder().user(user)
+                .title(cardPostRequestDto.getTitle())
+                .content(cardPostRequestDto.getContent())
+                .isDone(false)
+                .build();
         // when
         Card savedCard = cardRepository.save(card);
         // then
@@ -58,7 +66,8 @@ class CardRepositoryTest {
         // Given
         String title = "제목";
         String content = "내용";
-        Card card = cardRepository.save(new Card(title, content, user));
+        Card card = cardRepository.save(
+                Card.builder().title(title).content(content).user(user).isDone(false).build());
         // When
         Card savedCard = cardRepository.findById(card.getId()).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)

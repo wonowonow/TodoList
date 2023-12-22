@@ -45,7 +45,7 @@ class CommentServiceTest {
         commentService = new CommentServiceImpl(commentRepository, cardRepository);
         user = new User("username", "password", UserRoleEnum.USER);
         user.setId(1L);
-        card = new Card("제목", "내용", user);
+        card = Card.builder().title("제목").content("내용").user(user).build();
         card.setId(1L);
     }
 

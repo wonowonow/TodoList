@@ -30,7 +30,12 @@ public class CardServiceImplV1 implements CardService {
 
         String title = cardPostRequestDto.getTitle();
         String content = cardPostRequestDto.getContent();
-        Card card = new Card(title, content, user);
+        Card card = Card
+                .builder()
+                .user(user)
+                .title(title)
+                .content(content)
+                .build();
         cardRepository.save(card);
         return new CardResponseDto(card);
     }

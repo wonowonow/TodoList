@@ -40,7 +40,7 @@ class CardHashTagQueryRepositoryImplTest {
     void test() {
         User user = User.builder().username("username").password("password").role(UserRoleEnum.USER).build();
         User savedUser = userRepository.save(user);
-        Card card = new Card("제목", "내용#나나", savedUser);
+        Card card = Card.builder().title("제목").content("내용#나나").user(savedUser).isDone(false).build();
         HashTag hashTag = HashTag.builder().name("#나나").build();
         HashTag savedHashTag = hashTagRepository.save(hashTag);
         Card savedCard = cardRepository.save(card);

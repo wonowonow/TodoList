@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -37,6 +38,7 @@ import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import com.sparta.todoapp.domain.user.service.UserService;
 import com.sparta.todoapp.global.config.WebSecurityConfig;
 import com.sparta.todoapp.global.security.UserDetailsImpl;
+import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +52,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -115,6 +118,7 @@ public class UserCardMvcTest {
     @DisplayName("유저 테스트 모음")
     @Nested
     class userTests {
+
         @Test
         @DisplayName("회원 가입 테스트")
         void test1() throws Exception {
@@ -137,33 +141,41 @@ public class UserCardMvcTest {
     @Nested
     @DisplayName("투 두 카드 테스트 모음")
     class cardTests {
+
         @Test
         @DisplayName("카드 생성 테스트")
         void test2() throws Exception {
+            FileInputStream fileInputStream = new FileInputStream("src/test/java/com/sparta/todoapp/mvc/testfile.jpg");
             // given
             mockUserSetup();
-            CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
-            cardPostRequestDto.setTitle("제목");
-            cardPostRequestDto.setContent("내용");
-            String cardPostRequestJson = objectMapper.writeValueAsString(cardPostRequestDto);
+            String title = "제목";
+            String content = "내용";
+            MockMultipartFile image = new MockMultipartFile(
+                    "file",
+                    "testfile.jpg",
+                    "image/jpg",
+                    fileInputStream
+            );
+
             CardResponseDto cardResponseDto = new CardResponseDto();
             cardResponseDto.setAuthor("username");
-            cardResponseDto.setContent("내용");
-            cardResponseDto.setTitle("제목");
+            cardResponseDto.setTitle(title);
+            cardResponseDto.setContent(content);
+            cardResponseDto.setImageUrl(null);
             cardResponseDto.setIsDone(false);
-            String title = "$.title";
+            String exTitle = "$.title";
             given(cardService.createTodoCard(any(CardPostRequestDto.class), any(User.class)))
                     .willReturn(cardResponseDto);
 
             // when - then
-            mvc.perform(post("/todos")
-                            .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
-                            .content(cardPostRequestJson)
-                            .accept(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+            mvc.perform(multipart("/todos")
+                            .file(image)
+                            .param("title", title)
+                            .param("content", content)
                             .principal(mockPrincipal)
                     )
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath(title, is("제목")));
+                    .andExpect(jsonPath(exTitle, is(title)));
         }
 
         @Test
@@ -171,29 +183,40 @@ public class UserCardMvcTest {
         void test3() throws Exception {
             // Given
             mockUserSetup();
-            CardPostRequestDto requestDto = new CardPostRequestDto();
-            requestDto.setTitle("수정제목");
-            requestDto.setContent("수정내용");
-            String requestJson = objectMapper.writeValueAsString(requestDto);
-            CardResponseDto responseDto = new CardResponseDto();
-            responseDto.setTitle("수정제목");
-            responseDto.setContent("수정내용");
-            responseDto.setAuthor("username");
-            responseDto.setIsDone(false);
-            String title = "$.title";
-            String content = "$.content";
+            String title = "수정제목";
+            String content = "수정내용";
+            FileInputStream fileInputStream = new FileInputStream("src/test/java/com/sparta/todoapp/mvc/testfile.jpg");
+            MockMultipartFile image = new MockMultipartFile(
+                    "file",
+                    "testfile.jpg",
+                    "image/jpg",
+                    fileInputStream
+            );
+
+            CardResponseDto cardResponseDto = new CardResponseDto();
+            cardResponseDto.setTitle(title);
+            cardResponseDto.setContent(content);
+            cardResponseDto.setAuthor("username");
+            cardResponseDto.setImageUrl(null);
+            cardResponseDto.setIsDone(false);
+            String exTitle = "$.title";
+            String exContent = "$.content";
             given(cardService.editTodoCard(any(CardPostRequestDto.class), any(Long.class),
-                    any(User.class))).willReturn(responseDto);
+                    any(User.class))).willReturn(cardResponseDto);
             // When & Then
-            mvc.perform(put("/todos/1")
-                            .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
-                            .content(requestJson)
-                            .accept(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+            mvc.perform(multipart("/todos/1")
+                            .file(image)
+                            .param("title", title)
+                            .param("content", content)
+                            .with(request -> {
+                                request.setMethod("PUT");
+                                return request;
+                            })
                             .principal(mockPrincipal)
                     )
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath(title, is("수정제목")))
-                    .andExpect(jsonPath(content, is("수정내용")));
+                    .andExpect(jsonPath(exTitle, is(title)))
+                    .andExpect(jsonPath(exContent, is(content)));
         }
 
         @Test
@@ -237,6 +260,7 @@ public class UserCardMvcTest {
     @Nested
     @DisplayName("댓글 테스트 모음")
     class commentTests {
+
         @Test
         @DisplayName("댓글 생성 테스트")
         void 댓글_생성_테스트() throws Exception {
@@ -307,7 +331,7 @@ public class UserCardMvcTest {
             User user = new User(username, password, role);
             String cardTitle = "제목";
             String cardContent = "내용";
-            Card card = new Card(cardTitle, cardContent, user);
+            Card card = Card.builder().title(cardTitle).content(cardContent).user(user).build();
             String commentContent = "댓글내용";
             Long commentId = 1L;
             Comment comment = new Comment(commentContent, user, card);

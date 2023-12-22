@@ -38,7 +38,7 @@ class CommentTest {
         String cardTitle = "카드제목";
         String cardContent = "카드내용";
         Card savedCard = entityManager.persistFlushFind(
-                new Card(cardTitle, cardContent, savedUser));
+                Card.builder().title(cardTitle).content(cardContent).user(savedUser).isDone(false).build());
     }
 
     @Test

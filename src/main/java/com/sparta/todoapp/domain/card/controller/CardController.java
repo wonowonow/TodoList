@@ -36,7 +36,6 @@ public class CardController {
     }
 
     @PostMapping("/todos")
-
     public ResponseEntity<CardResponseDto> createTodoCard(
             @ModelAttribute @Valid CardPostRequestDto cardPostRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {

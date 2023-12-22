@@ -63,8 +63,6 @@ public class CardQueryRepositoryImpl implements CardQueryRepository {
                 .select(cardHashTag.count())
                 .from(cardHashTag)
                 .join(cardHashTag.hashTag, hashTag)
-                .join(cardHashTag.card, card)
-                .join(card.user, user)
                 .where(hashTag.name.eq(searchHashTag));
 
         return PageableExecutionUtils.getPage(content, pageable, total::fetchOne);
