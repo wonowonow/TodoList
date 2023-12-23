@@ -72,7 +72,6 @@ class CommentServiceTest {
         // given
         String content = "내용";
         Comment comment = new Comment(content, user, card);
-        comment.setId(1L);
         Long commentId = comment.getId();
         CommentRequestDto requestDto = new CommentRequestDto();
         requestDto.setContent("수정");
@@ -90,7 +89,6 @@ class CommentServiceTest {
     void 댓글_삭제() {
         // given
         Comment comment = new Comment("내용", user, card);
-        comment.setId(1L);
         Long commentId = comment.getId();
         given(commentRepository.findById(commentId)).willReturn(Optional.of(comment));
         // when

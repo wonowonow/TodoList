@@ -330,9 +330,7 @@ public class UserCardMvcTest {
             String cardContent = "내용";
             Card card = Card.builder().title(cardTitle).content(cardContent).user(user).build();
             String commentContent = "댓글내용";
-            Long commentId = 1L;
             Comment comment = new Comment(commentContent, user, card);
-            comment.setId(commentId);
             commentRepository.save(comment);
             // when & then
             mvc.perform(delete("/todos/1/comments/1")
