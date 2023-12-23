@@ -1,5 +1,7 @@
 package com.sparta.todoapp.domain.card.entity;
 
+import com.sparta.todoapp.domain.card.dto.CardDoneStatusRequestDto;
+import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.card_hashtag.entity.CardHashTag;
 import com.sparta.todoapp.domain.comment.entity.Comment;
@@ -29,8 +31,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
-@Setter
-@Builder
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -71,4 +71,34 @@ public class Card {
 
     @OneToMany(mappedBy = "card")
     private List<CardHashTag> cardHashTags;
+
+    @Builder
+    public Card(String title, String content, Boolean isDone, String imageUrl, User user) {
+        this.title = title;
+        this.content = content;
+        this.isDone = isDone;
+        this.imageUrl = imageUrl;
+        this.user = user;
+    }
+
+    public static Card createCard (CardPostRequestDto requestDto, String imageUrl, User user) {
+
+        return Card.builder()
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .isDone(false)
+                .user(user)
+                .imageUrl(imageUrl)
+                .build();
+    }
+
+    public void editTodoCard(CardPostRequestDto requestDto, String imageUrl) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.imageUrl = imageUrl;
+    }
+
+    public void changeCardStatus(CardDoneStatusRequestDto requestDto) {
+        this.isDone = requestDto.getIsDone();
+    }
 }

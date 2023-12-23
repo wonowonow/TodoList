@@ -6,6 +6,8 @@ import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.repository.CardRepository;
+import com.sparta.todoapp.domain.hashtag.service.HashTagService;
+import com.sparta.todoapp.domain.s3.S3UploadService;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.global.exception.CustomException;
 import com.sparta.todoapp.global.exception.ExceptionCode;
@@ -25,18 +27,29 @@ public class CardServiceImplV1 implements CardService {
 
     private final CardRepository cardRepository;
 
+    private final HashTagService hashTagService;
+
+    private final S3UploadService s3UploadService;
+
     @Override
     public CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
 
-        String title = cardPostRequestDto.getTitle();
-        String content = cardPostRequestDto.getContent();
-        Card card = Card
-                .builder()
-                .user(user)
-                .title(title)
-                .content(content)
-                .build();
+        MultipartFile multipartFile = cardPostRequestDto.getFile();
+
+        String imageUrl = null;
+
+        if (multipartFile != null) {
+            imageUrl = s3UploadService.saveFile(multipartFile);
+        }
+
+        Card card = Card.createCard(cardPostRequestDto, imageUrl, user);
+
         cardRepository.save(card);
+
+        List<String> hashTagList = hashTagService.findHashTagByCardContent(card);
+
+        hashTagService.saveTag(hashTagList, card);
+
         return new CardResponseDto(card);
     }
 
@@ -65,12 +78,26 @@ public class CardServiceImplV1 implements CardService {
         Card card = cardRepository.findById(cardId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
         );
+
+        MultipartFile multipartFile = cardPostRequestDto.getFile();
+
+        String imageUrl = null;
+
+        if(multipartFile != null) {
+            imageUrl = s3UploadService.saveFile(multipartFile);
+        }
+
         if (card.getUser().getId().equals(user.getId())) {
-            card.setContent(cardPostRequestDto.getContent());
-            card.setTitle(cardPostRequestDto.getTitle());
+            card.editTodoCard(cardPostRequestDto, imageUrl);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
+
+        hashTagService.deleteTag(cardId);
+
+        List<String> hashTagList = hashTagService.findHashTagByCardContent(card);
+
+        hashTagService.saveTag(hashTagList, card);
 
         return new CardResponseDto(card);
     }
@@ -84,7 +111,7 @@ public class CardServiceImplV1 implements CardService {
         );
 
         if (card.getUser().getId().equals(user.getId())) {
-            card.setIsDone(cardDoneStatusRequestDto.getIsDone());
+            card.changeCardStatus(cardDoneStatusRequestDto);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }

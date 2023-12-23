@@ -199,11 +199,10 @@ class CardServiceV2Test {
         @DisplayName("카드 상태 변경 테스트 - 성공")
         void 카드_상태_변경_테스트_성공() {
             // given
-            CardService cardService = new CardServiceImplV1(cardRepository);
+            CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
             User user = new User("username", "password", UserRoleEnum.USER);
             user.setId(1L);
             Card card = Card.builder().title("제목").content("내용").user(user).build();
-            card.setId(1L);
             CardResponseDto cardResponseDto = new CardResponseDto(card);
             CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
             doneStatusRequestDto.setIsDone(true);
@@ -222,11 +221,10 @@ class CardServiceV2Test {
         @DisplayName("카드 상태 변경 테스트 - 실패 (투 두 카드 없음)")
         void 카드_상태_변경_테스트_실패_카드_없음() {
             // given
-            CardService cardService = new CardServiceImplV1(cardRepository);
+            CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
             User user = new User("username", "password", UserRoleEnum.USER);
             user.setId(1L);
             Card card = Card.builder().title("제목").content("내용").user(user).build();
-            card.setId(1L);
             CardResponseDto cardResponseDto = new CardResponseDto(card);
             CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
             doneStatusRequestDto.setIsDone(true);
@@ -242,13 +240,12 @@ class CardServiceV2Test {
         @DisplayName("카드 상태 변경 테스트 - 실패 (권한 없음)")
         void 카드_상태_변경_테스트_실패_권한_없음() {
             // given
-            CardService cardService = new CardServiceImplV1(cardRepository);
+            CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
             User user1 = new User("username", "password", UserRoleEnum.USER);
             user1.setId(1L);
             User user2 = new User("username", "password", UserRoleEnum.USER);
             user2.setId(2L);
             Card card = Card.builder().title("제목").content("내용").user(user1).build();
-            card.setId(1L);
             CardResponseDto cardResponseDto = new CardResponseDto(card);
             CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
             doneStatusRequestDto.setIsDone(true);
@@ -268,7 +265,7 @@ class CardServiceV2Test {
         @DisplayName("해시태그 기준 검색")
         void 해시태그() {
             // Given
-            CardService cardService = new CardServiceImplV1(cardRepository);
+            CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
 
             String title = "제목";
             String content = "앞#내용 뒤 띄어쓰기";

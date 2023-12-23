@@ -29,14 +29,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class CardServiceImplV2 implements CardService {
 
     private final CardRepository cardRepository;
+
     private final HashTagService hashTagService;
+
     private final S3UploadService s3UploadService;
 
     @Override
     public CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
 
-        String title = cardPostRequestDto.getTitle();
-        String content = cardPostRequestDto.getContent();
         MultipartFile multipartFile = cardPostRequestDto.getFile();
 
         String imageUrl = null;
@@ -45,13 +45,7 @@ public class CardServiceImplV2 implements CardService {
             imageUrl = s3UploadService.saveFile(multipartFile);
         }
 
-        Card card = Card.builder()
-                .title(title)
-                .content(content)
-                .imageUrl(imageUrl)
-                .isDone(false)
-                .user(user)
-                .build();
+        Card card = Card.createCard(cardPostRequestDto, imageUrl, user);
 
         cardRepository.save(card);
 
@@ -95,9 +89,7 @@ public class CardServiceImplV2 implements CardService {
         }
 
         if (card.getUser().getId().equals(user.getId())) {
-            card.setContent(cardPostRequestDto.getContent());
-            card.setTitle(cardPostRequestDto.getTitle());
-            card.setImageUrl(imageUrl);
+            card.editTodoCard(cardPostRequestDto, imageUrl);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
@@ -119,7 +111,7 @@ public class CardServiceImplV2 implements CardService {
         Card card = getCard(cardId);
 
         if (card.getUser().getId().equals(user.getId())) {
-            card.setIsDone(cardDoneStatusRequestDto.getIsDone());
+            card.changeCardStatus(cardDoneStatusRequestDto);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
