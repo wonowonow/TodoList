@@ -11,20 +11,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
-@Setter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Table(name = "comments")
@@ -53,9 +50,22 @@ public class Comment {
     @JoinColumn(name = "card_id", nullable = false)
     private Card card;
 
+    @Builder
     public Comment(String content, User user, Card card) {
         this.content = content;
         this.user = user;
         this.card = card;
+    }
+
+    public static Comment createComment(String content, User user, Card card) {
+        return Comment.builder()
+                      .content(content)
+                      .user(user)
+                      .card(card)
+                      .build();
+    }
+
+    public void editComment(String content) {
+        this.content = content;
     }
 }

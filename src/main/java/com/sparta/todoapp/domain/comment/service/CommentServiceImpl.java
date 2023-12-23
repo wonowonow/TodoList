@@ -10,7 +10,6 @@ import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.global.exception.CustomException;
 import com.sparta.todoapp.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +25,9 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDto createComment(Long cardId, CommentRequestDto commentRequestDto,
             User user) {
 
-        String content = commentRequestDto.getContent();
-        Card card = cardRepository.findById(cardId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
-        );
-        Comment comment = new Comment(content, user, card);
+        Card card = getCardByCardId(cardId);
+
+        Comment comment = Comment.createComment(commentRequestDto.getContent(), user, card);
         commentRepository.save(comment);
 
         return new CommentResponseDto(comment);
@@ -41,12 +38,10 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDto editComment(Long commentId,
             CommentRequestDto commentRequestDto, User user) {
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
-        );
+        Comment comment = getCommentByCommentId(commentId);
 
         if (comment.getUser().getId().equals(user.getId())) {
-            comment.setContent(commentRequestDto.getContent());
+            comment.editComment(commentRequestDto.getContent());
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
@@ -57,14 +52,24 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long commentId, User user) {
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
-        );
+        Comment comment = getCommentByCommentId(commentId);
 
         if (comment.getUser().getId().equals(user.getId())) {
             commentRepository.delete(comment);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_DELETE_ONLY_WRITER);
         }
+    }
+
+    private Card getCardByCardId(Long cardId) {
+        return cardRepository.findById(cardId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
+        );
+    }
+
+    private Comment getCommentByCommentId(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
+        );
     }
 }
