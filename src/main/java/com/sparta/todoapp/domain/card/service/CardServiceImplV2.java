@@ -11,7 +11,6 @@ import com.sparta.todoapp.domain.s3.S3UploadService;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.global.exception.CustomException;
 import com.sparta.todoapp.global.exception.ExceptionCode;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +35,8 @@ public class CardServiceImplV2 implements CardService {
 
     @Override
     public CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
-
+        String title = cardPostRequestDto.getTitle();
+        String content = cardPostRequestDto.getContent();
         MultipartFile multipartFile = cardPostRequestDto.getFile();
 
         String imageUrl = null;
@@ -45,7 +45,7 @@ public class CardServiceImplV2 implements CardService {
             imageUrl = s3UploadService.saveFile(multipartFile);
         }
 
-        Card card = Card.createCard(cardPostRequestDto, imageUrl, user);
+        Card card = Card.createCard(title, content, imageUrl, user);
 
         cardRepository.save(card);
 
@@ -77,19 +77,18 @@ public class CardServiceImplV2 implements CardService {
     @Transactional
     public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
             User user) {
-
         Card card = getCard(cardId);
-
+        String title = cardPostRequestDto.getTitle();
+        String content = cardPostRequestDto.getContent();
         MultipartFile multipartFile = cardPostRequestDto.getFile();
 
         String imageUrl = null;
-
         if(multipartFile != null) {
             imageUrl = s3UploadService.saveFile(multipartFile);
         }
 
         if (card.getUser().getId().equals(user.getId())) {
-            card.editTodoCard(cardPostRequestDto, imageUrl);
+            card.editTodoCard(title, content, imageUrl);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
@@ -107,11 +106,11 @@ public class CardServiceImplV2 implements CardService {
     @Transactional
     public CardResponseDto changeTodoCardDone(Long cardId, User user,
             CardDoneStatusRequestDto cardDoneStatusRequestDto) {
-
+        Boolean isDone = cardDoneStatusRequestDto.getIsDone();
         Card card = getCard(cardId);
 
         if (card.getUser().getId().equals(user.getId())) {
-            card.changeCardStatus(cardDoneStatusRequestDto);
+            card.changeCardStatus(isDone);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }

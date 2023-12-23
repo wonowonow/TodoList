@@ -33,7 +33,8 @@ public class CardServiceImplV1 implements CardService {
 
     @Override
     public CardResponseDto createTodoCard(CardPostRequestDto cardPostRequestDto, User user) {
-
+        String title = cardPostRequestDto.getTitle();
+        String content = cardPostRequestDto.getContent();
         MultipartFile multipartFile = cardPostRequestDto.getFile();
 
         String imageUrl = null;
@@ -42,7 +43,7 @@ public class CardServiceImplV1 implements CardService {
             imageUrl = s3UploadService.saveFile(multipartFile);
         }
 
-        Card card = Card.createCard(cardPostRequestDto, imageUrl, user);
+        Card card = Card.createCard(title, content, imageUrl, user);
 
         cardRepository.save(card);
 
@@ -75,11 +76,13 @@ public class CardServiceImplV1 implements CardService {
     @Transactional
     public CardResponseDto editTodoCard(CardPostRequestDto cardPostRequestDto, Long cardId,
             User user) {
+        String title = cardPostRequestDto.getTitle();
+        String content = cardPostRequestDto.getContent();
+        MultipartFile multipartFile = cardPostRequestDto.getFile();
+
         Card card = cardRepository.findById(cardId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
         );
-
-        MultipartFile multipartFile = cardPostRequestDto.getFile();
 
         String imageUrl = null;
 
@@ -88,7 +91,7 @@ public class CardServiceImplV1 implements CardService {
         }
 
         if (card.getUser().getId().equals(user.getId())) {
-            card.editTodoCard(cardPostRequestDto, imageUrl);
+            card.editTodoCard(title, content, imageUrl);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
@@ -106,12 +109,14 @@ public class CardServiceImplV1 implements CardService {
     @Transactional
     public CardResponseDto changeTodoCardDone(Long cardId, User user,
             CardDoneStatusRequestDto cardDoneStatusRequestDto) {
+        Boolean isDone = cardDoneStatusRequestDto.getIsDone();
+
         Card card = cardRepository.findById(cardId).orElseThrow(
                 () -> new CustomException(ExceptionCode.NOT_FOUND_TODO)
         );
 
         if (card.getUser().getId().equals(user.getId())) {
-            card.changeCardStatus(cardDoneStatusRequestDto);
+            card.changeCardStatus(isDone);
         } else {
             throw new CustomException(ExceptionCode.FORBIDDEN_EDIT_ONLY_WRITER);
         }
