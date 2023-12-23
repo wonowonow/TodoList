@@ -1,5 +1,7 @@
 package com.sparta.todoapp.domain.card.entity;
 
+import com.sparta.todoapp.domain.card.dto.CardDoneStatusRequestDto;
+import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.card_hashtag.entity.CardHashTag;
 import com.sparta.todoapp.domain.comment.entity.Comment;
@@ -17,6 +19,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,9 +31,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
-@Setter
 @EntityListeners(AuditingEntityListener.class)
-@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "cards")
 public class Card {
 
@@ -77,10 +81,24 @@ public class Card {
         this.user = user;
     }
 
-    public Card(String title, String content, User user) {
-        this.title = title;
-        this.content = content;
-        this.user = user;
-        this.isDone = false;
+    public static Card createCard (CardPostRequestDto requestDto, String imageUrl, User user) {
+
+        return Card.builder()
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .isDone(false)
+                .user(user)
+                .imageUrl(imageUrl)
+                .build();
+    }
+
+    public void editTodoCard(CardPostRequestDto requestDto, String imageUrl) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.imageUrl = imageUrl;
+    }
+
+    public void changeCardStatus(CardDoneStatusRequestDto requestDto) {
+        this.isDone = requestDto.getIsDone();
     }
 }

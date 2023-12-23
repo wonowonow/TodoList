@@ -46,7 +46,7 @@ class CardHashTagRepositoryTest {
     void setUp() {
         user = User.builder().username("username").password("password").role(UserRoleEnum.USER).build();
         user = userRepository.save(user);
-        card = new Card("제목", "내용#나나", user);
+        card = Card.builder().title("제목").content("내용#나나").isDone(false).user(user).build();
         card = cardRepository.save(card);
         hashTag = HashTag.builder().name("#나나").build();
         hashTag = hashTagRepository.save(hashTag);

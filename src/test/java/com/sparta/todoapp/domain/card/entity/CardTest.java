@@ -35,11 +35,17 @@ class CardTest {
 
     @Test
     @DisplayName("투 두 카드 저장 시 제목, 내용, 유저가 일치해야 한다")
-    void 카드_저장_테스트(){
+    void 카드_저장_테스트() {
         //given
         String title = "카드제목";
         String content = "카드내용";
-        Card card = new Card(title, content, user);
+        Card card = Card
+                .builder()
+                .user(user)
+                .title(title)
+                .content(content)
+                .isDone(false)
+                .build();
         // when
         Card savedCard = entityManager.persistFlushFind(card);
         // then
@@ -52,11 +58,16 @@ class CardTest {
 
     @Test
     @DisplayName("투 두 카드 저장 시 제목이 null이면 예외를 반환한다")
-    void 카드_저장_테스트_제목_Null(){
+    void 카드_저장_테스트_제목_Null() {
         //given
         String title = null;
         String content = "카드내용";
-        Card card = new Card(title, content, user);
+        Card card = Card
+                .builder()
+                .title(title)
+                .content(content)
+                .user(user)
+                .build();
         // when & then
         Assertions.assertThrows(ConstraintViolationException.class, () ->
                 entityManager.persist(card)
@@ -65,11 +76,16 @@ class CardTest {
 
     @Test
     @DisplayName("투 두 카드 저장 시 내용이 null이면 예외를 반환한다")
-    void 카드_저장_테스트_내용_Null(){
+    void 카드_저장_테스트_내용_Null() {
         //given
         String title = "카드제목";
         String content = null;
-        Card card = new Card(title, content, user);
+        Card card = Card
+                .builder()
+                .title(title)
+                .content(content)
+                .user(user)
+                .build();
         // when & then
         Assertions.assertThrows(ConstraintViolationException.class, () ->
                 entityManager.persist(card)

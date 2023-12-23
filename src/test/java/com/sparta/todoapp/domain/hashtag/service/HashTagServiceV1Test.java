@@ -54,7 +54,7 @@ class HashTagServiceV1Test {
         String cardTitle = "카드 제목";
         String cardContent = "카드 #저장#테스트 #테테테";
 
-        Card card = new Card(cardTitle, cardContent, user);
+        Card card = Card.builder().title(cardTitle).content(cardContent).user(user).build();
 
         // When
         List<String> result = hashTagService.findHashTagByCardContent(card);
@@ -78,7 +78,7 @@ class HashTagServiceV1Test {
         hashTagList.add("#하하");
         hashTagList.add("#재밌당");
 
-        Card card = new Card(cardTitle, cardContent, user);
+        Card card = Card.builder().title(cardTitle).content(cardContent).user(user).build();
 
         when(hashTagRepository
                 .existsHashTagByName(any(String.class)))

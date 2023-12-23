@@ -55,10 +55,7 @@ class CardServiceV2Test {
         String title = "제목";
         String content = "내용";
         User user = new User();
-        CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
-
-        cardPostRequestDto.setTitle(title);
-        cardPostRequestDto.setContent(content);
+        CardPostRequestDto cardPostRequestDto = CardPostRequestDto.builder().title(title).content(content).build();
 
         CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
 
@@ -77,10 +74,11 @@ class CardServiceV2Test {
         @DisplayName("카드 불러오기 테스트 - 성공")
         void 카드_불러오기_테스트_성공() {
             // given
-            Long cardId = 1L;
             CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
+
+            Long cardId = 1L;
             User user = new User();
-            Card card = new Card("제목", "내용", user);
+            Card card = Card.builder().title("제목").content("내용").user(user).build();
 
             given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
             // when
@@ -114,13 +112,13 @@ class CardServiceV2Test {
         User user1 = new User("username1", "password1", UserRoleEnum.USER);
         User user2 = new User("username2", "password2", UserRoleEnum.USER);
         List<Card> cardList = new ArrayList<>();
-        cardList.add(new Card("제목 1", "내용 1", user1));
-        cardList.add(new Card("제목 2", "내용 2", user2));
-        cardList.add(new Card("제목 3", "내용 3", user1));
-        cardList.add(new Card("제목 4", "내용 4", user1));
-        cardList.add(new Card("제목 5", "내용 5", user1));
-        cardList.add(new Card("제목 6", "내용 6", user1));
-        cardList.add(new Card("제목 7", "내용 7", user1));
+        cardList.add(Card.builder().title("제목 1").content("내용 1").user(user1).build());
+        cardList.add(Card.builder().title("제목 2").content("내용 2").user(user2).build());
+        cardList.add(Card.builder().title("제목 3").content("내용 3").user(user1).build());
+        cardList.add(Card.builder().title("제목 4").content("내용 4").user(user1).build());
+        cardList.add(Card.builder().title("제목 5").content("내용 5").user(user1).build());
+        cardList.add(Card.builder().title("제목 6").content("내용 6").user(user1).build());
+        cardList.add(Card.builder().title("제목 7").content("내용 7").user(user1).build());
         given(cardRepository.findAllByOrderByCreatedAtDesc()).willReturn(cardList);
         // when
         Map<String, List<CardListResponseDto>> result = cardService.getTodoCards();
@@ -140,15 +138,13 @@ class CardServiceV2Test {
         void 카드_변경_테스트_성공() {
             // given
             CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
-            CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
             Long cardId = 1L;
             String title = "수정 제목";
             String content = "수정 내용";
             User user = new User("username", "password", UserRoleEnum.USER);
             user.setId(1L);
-            Card card = new Card("제목", "내용", user);
-            cardPostRequestDto.setTitle(title);
-            cardPostRequestDto.setContent(content);
+            Card card = Card.builder().title("제목").content("내용").user(user).build();
+            CardPostRequestDto cardPostRequestDto = CardPostRequestDto.builder().title(title).content(content).build();
             given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
             // when
             CardResponseDto result = cardService.editTodoCard(cardPostRequestDto, cardId, user);
@@ -161,16 +157,12 @@ class CardServiceV2Test {
         void 카드_변경_테스트_실패_카드_없음() {
             // given
             CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
-            CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
-            Long cardId = 1L;
             String title = "수정 제목";
             String content = "수정 내용";
+            CardPostRequestDto cardPostRequestDto = CardPostRequestDto.builder().title(title).content(content).build();
+            Long cardId = 1L;
             User user = new User("username", "password", UserRoleEnum.USER);
             user.setId(1L);
-            Card card = new Card("제목", "내용", user);
-            cardPostRequestDto.setTitle(title);
-            cardPostRequestDto.setContent(content);
-            given(cardRepository.findById(cardId)).willReturn(Optional.empty());
             // when & then
             assertThatThrownBy(() -> cardService.editTodoCard(cardPostRequestDto, cardId, user))
                     .isInstanceOf(CustomException.class)
@@ -182,7 +174,6 @@ class CardServiceV2Test {
         void 카드_변경_테스트_실패_권한_없음() {
             // given
             CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
-            CardPostRequestDto cardPostRequestDto = new CardPostRequestDto();
             Long cardId = 1L;
             String title = "수정 제목";
             String content = "수정 내용";
@@ -190,9 +181,8 @@ class CardServiceV2Test {
             user1.setId(1L);
             User user2 = new User("username", "password", UserRoleEnum.USER);
             user2.setId(2L);
-            Card card = new Card("제목", "내용", user1);
-            cardPostRequestDto.setTitle(title);
-            cardPostRequestDto.setContent(content);
+            Card card = Card.builder().title(title).content(content).user(user1).build();
+            CardPostRequestDto cardPostRequestDto = CardPostRequestDto.builder().title(title).content(content).build();
             given(cardRepository.findById(cardId)).willReturn(Optional.of(card));
             // when & then
             assertThatThrownBy(() -> cardService.editTodoCard(cardPostRequestDto, cardId, user2))
@@ -212,8 +202,7 @@ class CardServiceV2Test {
             CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
             User user = new User("username", "password", UserRoleEnum.USER);
             user.setId(1L);
-            Card card = new Card("제목", "내용", user);
-            card.setId(1L);
+            Card card = Card.builder().title("제목").content("내용").user(user).build();
             CardResponseDto cardResponseDto = new CardResponseDto(card);
             CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
             doneStatusRequestDto.setIsDone(true);
@@ -235,8 +224,7 @@ class CardServiceV2Test {
             CardService cardService = new CardServiceImplV2(cardRepository, hashTagService, s3UploadService);
             User user = new User("username", "password", UserRoleEnum.USER);
             user.setId(1L);
-            Card card = new Card("제목", "내용", user);
-            card.setId(1L);
+            Card card = Card.builder().title("제목").content("내용").user(user).build();
             CardResponseDto cardResponseDto = new CardResponseDto(card);
             CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
             doneStatusRequestDto.setIsDone(true);
@@ -257,8 +245,7 @@ class CardServiceV2Test {
             user1.setId(1L);
             User user2 = new User("username", "password", UserRoleEnum.USER);
             user2.setId(2L);
-            Card card = new Card("제목", "내용", user1);
-            card.setId(1L);
+            Card card = Card.builder().title("제목").content("내용").user(user1).build();
             CardResponseDto cardResponseDto = new CardResponseDto(card);
             CardDoneStatusRequestDto doneStatusRequestDto = new CardDoneStatusRequestDto();
             doneStatusRequestDto.setIsDone(true);
@@ -290,7 +277,7 @@ class CardServiceV2Test {
                     .build();
 
             Pageable pageable = PageRequest.of(0, 1);
-            Card card = new Card(title, content, user);
+            Card card = Card.builder().title(title).content(content).user(user).build();
             Page<CardListResponseDto> result = new PageImpl<>(List.of(new CardListResponseDto(card)));
 
             given(cardService.searchTodoCardWithHashTag("#내용", pageable)).willReturn(result);
