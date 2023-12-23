@@ -8,8 +8,8 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
-@Setter
 public class CardResponseDto {
+
     private String title;
     private String content;
     private String imageUrl;
@@ -24,5 +24,14 @@ public class CardResponseDto {
         this.author = card.getUser().getUsername();
         this.isDone = card.getIsDone();
         this.createdAt = card.getCreatedAt();
+    }
+
+    public CardResponseDto(String title, String content, String imageUrl, String author,
+            Boolean isDone) {
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.author = author;
+        this.isDone = isDone;
     }
 }

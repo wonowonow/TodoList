@@ -150,19 +150,16 @@ public class UserCardMvcTest {
             mockUserSetup();
             String title = "제목";
             String content = "내용";
+            String author = "작성자";
+            String imageUrl = "imageUrl";
+            Boolean isDone = false;
+            CardResponseDto cardResponseDto = new CardResponseDto(title, content, imageUrl, author, isDone);
             MockMultipartFile image = new MockMultipartFile(
                     "file",
                     "testfile.jpg",
                     "image/jpg",
                     fileInputStream
             );
-
-            CardResponseDto cardResponseDto = new CardResponseDto();
-            cardResponseDto.setAuthor("username");
-            cardResponseDto.setTitle(title);
-            cardResponseDto.setContent(content);
-            cardResponseDto.setImageUrl(null);
-            cardResponseDto.setIsDone(false);
             String exTitle = "$.title";
             given(cardService.createTodoCard(any(CardPostRequestDto.class), any(User.class)))
                     .willReturn(cardResponseDto);
@@ -185,6 +182,11 @@ public class UserCardMvcTest {
             mockUserSetup();
             String title = "수정제목";
             String content = "수정내용";
+            String author = "작성자";
+            String imageUrl = "imageUrl";
+            Boolean isDone = false;
+            CardResponseDto cardResponseDto = new CardResponseDto(title, content, imageUrl, author, isDone);
+
             FileInputStream fileInputStream = new FileInputStream("src/test/java/com/sparta/todoapp/mvc/testfile.jpg");
             MockMultipartFile image = new MockMultipartFile(
                     "file",
@@ -193,12 +195,6 @@ public class UserCardMvcTest {
                     fileInputStream
             );
 
-            CardResponseDto cardResponseDto = new CardResponseDto();
-            cardResponseDto.setTitle(title);
-            cardResponseDto.setContent(content);
-            cardResponseDto.setAuthor("username");
-            cardResponseDto.setImageUrl(null);
-            cardResponseDto.setIsDone(false);
             String exTitle = "$.title";
             String exContent = "$.content";
             given(cardService.editTodoCard(any(CardPostRequestDto.class), any(Long.class),
@@ -226,21 +222,22 @@ public class UserCardMvcTest {
             mockUserSetup();
             CardDoneStatusRequestDto requestDto = new CardDoneStatusRequestDto();
             requestDto.setIsDone(true);
-            CardResponseDto responseDto = new CardResponseDto();
-            responseDto.setTitle("제목");
-            responseDto.setContent("내용");
-            responseDto.setAuthor("username");
-            responseDto.setIsDone(true);
+            String title = "수정제목";
+            String content = "수정내용";
+            String author = "작성자";
+            String imageUrl = "imageUrl";
+            Boolean isDone = true;
+            CardResponseDto cardResponseDto = new CardResponseDto(title, content, imageUrl, author, isDone);
             String requestJson = objectMapper.writeValueAsString(requestDto);
 
-            String title = "$.title";
-            String content = "$.content";
-            String author = "$.author";
-            String isDone = "$.isDone";
+            String exTitle = "$.title";
+            String exContent = "$.content";
+            String exAuthor = "$.author";
+            String exIsDone = "$.isDone";
 
             given(cardService.changeTodoCardDone(any(Long.class), any(User.class),
                     any(CardDoneStatusRequestDto.class)))
-                    .willReturn(responseDto);
+                    .willReturn(cardResponseDto);
             // When & Then
             mvc.perform(patch("/todos/1")
                             .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
@@ -249,10 +246,10 @@ public class UserCardMvcTest {
                             .principal(mockPrincipal)
                     )
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath(title, is("제목")))
-                    .andExpect(jsonPath(content, is("내용")))
-                    .andExpect(jsonPath(author, is("username")))
-                    .andExpect(jsonPath(isDone, is(true)));
+                    .andExpect(jsonPath(exTitle, is(title)))
+                    .andExpect(jsonPath(exContent, is(content)))
+                    .andExpect(jsonPath(exAuthor, is(author)))
+                    .andExpect(jsonPath(exIsDone, is(isDone)));
         }
     }
 
