@@ -1,6 +1,6 @@
 package com.sparta.todoapp.domain.hashtag.service;
 
-import static com.sparta.todoapp.domain.hashtag.entity.HashTag.*;
+import static com.sparta.todoapp.domain.hashtag.entity.HashTag.builder;
 
 import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card_hashtag.entity.CardHashTag;

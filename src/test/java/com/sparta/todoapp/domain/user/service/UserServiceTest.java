@@ -1,11 +1,9 @@
 package com.sparta.todoapp.domain.user.service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.sparta.todoapp.domain.user.dto.SignupRequestDto;
 import com.sparta.todoapp.domain.user.entity.User;

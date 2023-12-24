@@ -5,13 +5,10 @@ import com.sparta.todoapp.domain.card.dto.CardListResponseDto;
 import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.dto.CardResponseDto;
 import com.sparta.todoapp.domain.user.entity.User;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface CardService {
 

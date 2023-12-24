@@ -2,8 +2,6 @@ package com.sparta.todoapp.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.todoapp.global.dto.CommonResponseDto;
-import com.sparta.todoapp.global.exception.CustomException;
-import com.sparta.todoapp.global.exception.ExceptionCode;
 import com.sparta.todoapp.global.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

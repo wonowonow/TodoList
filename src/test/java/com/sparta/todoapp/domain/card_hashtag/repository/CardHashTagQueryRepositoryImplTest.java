@@ -1,8 +1,5 @@
 package com.sparta.todoapp.domain.card_hashtag.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.repository.CardRepository;
 import com.sparta.todoapp.domain.card_hashtag.entity.CardHashTag;
@@ -11,13 +8,9 @@ import com.sparta.todoapp.domain.hashtag.repository.HashTagRepository;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import com.sparta.todoapp.domain.user.repository.UserRepository;
-import com.sparta.todoapp.global.config.JpaConfig;
-import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
