@@ -1,7 +1,5 @@
 package com.sparta.todoapp.domain.card.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.sparta.todoapp.domain.card.dto.CardPostRequestDto;
 import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.user.entity.User;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 @ActiveProfiles("test")
 @DataJpaTest

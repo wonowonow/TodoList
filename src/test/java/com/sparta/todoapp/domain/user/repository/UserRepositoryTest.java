@@ -1,20 +1,14 @@
 package com.sparta.todoapp.domain.user.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.sparta.todoapp.domain.user.dto.SignupRequestDto;
 import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
-import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
 @ActiveProfiles("test")

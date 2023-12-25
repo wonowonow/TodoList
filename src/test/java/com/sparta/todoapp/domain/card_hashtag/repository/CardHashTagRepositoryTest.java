@@ -1,7 +1,6 @@
 package com.sparta.todoapp.domain.card_hashtag.repository;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.sparta.todoapp.domain.card.entity.Card;
 import com.sparta.todoapp.domain.card.repository.CardRepository;
@@ -12,7 +11,6 @@ import com.sparta.todoapp.domain.user.entity.User;
 import com.sparta.todoapp.domain.user.entity.UserRoleEnum;
 import com.sparta.todoapp.domain.user.repository.UserRepository;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
